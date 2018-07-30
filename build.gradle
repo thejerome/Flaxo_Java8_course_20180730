@@ -1,0 +1,12 @@
+plugins {
+    id "java" 
+    id "org.junit.platform.gradle.plugin" version "1.0.3"
+}
+repositories {
+    mavenCentral()
+    jcenter()
+}
+dependencies {
+    testCompile "org.junit.jupiter:junit-jupiter-api:5.0.3"
+    testRuntime "org.junit.jupiter:junit-jupiter-engine:5.0.3"
+}
