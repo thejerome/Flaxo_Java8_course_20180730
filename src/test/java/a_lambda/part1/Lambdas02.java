@@ -16,6 +16,7 @@ import com.google.common.collect.ImmutableMap;
 
 import a_lambda.data.Person;
 
+// Now we have them
 
 public class Lambdas02 {
 

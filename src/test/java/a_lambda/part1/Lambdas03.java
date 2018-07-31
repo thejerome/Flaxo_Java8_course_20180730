@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
+// Evolution from anonymous to lambda variations
+
 public class Lambdas03 {
 
     // SAM interface

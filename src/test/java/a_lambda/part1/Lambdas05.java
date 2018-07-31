@@ -1,6 +1,5 @@
 package a_lambda.part1;
 
-import java.io.Serializable;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -8,6 +7,10 @@ import org.junit.jupiter.api.Test;
 
 import a_lambda.data.Person;
 
+// Method references variety
+// Exception handling
+// Lambda conflicts
+// Factory implementations
 
 public class Lambdas05 {
     private <T> void printResult(T t, Function<T, String> f) {
@@ -71,7 +74,8 @@ public class Lambdas05 {
 
     @Test
     public void callConflict() {
-        conflict((DoSmth & Serializable) this::printAndReturn);
+        //show conflict, show resolving, show multiple interfaces (+ Serializable)
+//        conflict(this::printAndReturn);
     }
 
     private interface PersonFactory {

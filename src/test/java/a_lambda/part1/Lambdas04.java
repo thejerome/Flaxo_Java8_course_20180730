@@ -4,6 +4,9 @@ import org.junit.jupiter.api.Test;
 
 import a_lambda.data.Person;
 
+// Variety of lambdas
+// Capturing context
+
 public class Lambdas04 {
 
     private void run(Runnable r) {
@@ -11,7 +14,7 @@ public class Lambdas04 {
     }
 
     @Test
-    public void closure() {
+    public void capturingAnonymous() {
         Person person = new Person("John", "Galt", 33);
 
         run(new Runnable() {
@@ -25,7 +28,7 @@ public class Lambdas04 {
     }
 
     @Test
-    public void closure_lambda() {
+    public void capturingLambda() {
         Person person = new Person("John", "Galt", 33);
 
         // statement lambda
@@ -38,21 +41,17 @@ public class Lambdas04 {
         run(person::print);
     }
 
-    private Person _person = null;
-
-    public Person get_person() {
-        return _person;
-    }
+    private Person privatePerson = null;
 
     @Test
-    public void closure_this_lambda() {
-        _person = new Person("John", "Galt", 33);
+    public void capturingMystery() {
+        privatePerson = new Person("John", "Galt", 33);
+        privatePerson = new Person("John", "Galt", 34);
 
-        run(() -> /*this.*/_person.print());
-        run(/*this.*/_person::print);
+        run(() -> privatePerson.print());
+        run(privatePerson::print);
 
-        _person = new Person("a", "a", 1);
-
+        privatePerson = new Person("Mysterious", "Stranger", 777);
     }
 
 
@@ -63,16 +62,18 @@ public class Lambdas04 {
         };
     }
 
+    public Person getPrivatePerson() {
+        return privatePerson;
+    }
 
     @Test
-    public void closure_this_lambda2() {
-        _person = new Person("John", "Galt", 33);
+    public void capturingMystery2() {
+        privatePerson = new Person("John", "Galt", 33);
 
-        //final Person person = _person;
-        final Runnable r1 = runLater(() -> _person.print());
-        final Runnable r2 = runLater(get_person()::print);
+        final Runnable r1 = runLater(() -> privatePerson.print());
+        final Runnable r2 = runLater(getPrivatePerson()::print);
 
-        _person = new Person("a", "a", 1);
+        privatePerson = new Person("Mysterious", "Stranger", 777);
 
         r1.run();
         r2.run();

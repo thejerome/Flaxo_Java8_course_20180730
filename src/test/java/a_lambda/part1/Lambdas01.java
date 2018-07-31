@@ -21,7 +21,9 @@ import a_lambda.data.Person;
 
 // JSR-335 Lambda Expressions for the Java Programming Language
 
-// https://github.com/java8-course/lambda
+// https://github.com/thejerome/Flaxo_Java8_course_20180730
+
+// Long time ago there was no lambda... almost.
 
 public class Lambdas01 {
 
