@@ -1,18 +1,20 @@
 package b_streams.exercise;
 
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableMap;
 
-import data.Employee;
-import data.JobHistoryEntry;
-import data.Person;
+import b_streams.data.Employee;
+import b_streams.data.JobHistoryEntry;
+import b_streams.data.Person;
 
 public class CollectorsExercise1 {
 
@@ -35,7 +37,7 @@ public class CollectorsExercise1 {
                 .put(new Person("John", "Doe", 30), 5)
                 .put(new Person("Bob", "White", 31), 6)
                 .build();
-        Assert.assertEquals(expected, collected);
+        assertEquals(expected, collected);
     }
 
     @Test
@@ -59,7 +61,7 @@ public class CollectorsExercise1 {
                 .put(new Person("Bob", "White", 31), 6)
                 .build();
 
-        Assert.assertEquals(expected, collected);
+        assertEquals(expected, collected);
     }
 
     @Test
@@ -76,7 +78,7 @@ public class CollectorsExercise1 {
                 .put("White", 6 + 6 + 6 + 6)
                 .build();
 
-        Assert.assertEquals(expected, collected);
+        assertEquals(expected, collected);
     }
 
     private List<Employee> getEmployees() {
