@@ -62,16 +62,12 @@ public class Lambdas04 {
         };
     }
 
-    public Person getPrivatePerson() {
-        return privatePerson;
-    }
-
     @Test
     public void capturingMystery2() {
         privatePerson = new Person("John", "Galt", 33);
 
         final Runnable r1 = runLater(() -> privatePerson.print());
-        final Runnable r2 = runLater(getPrivatePerson()::print);
+        final Runnable r2 = runLater(privatePerson::print);
 
         privatePerson = new Person("Mysterious", "Stranger", 777);
 
