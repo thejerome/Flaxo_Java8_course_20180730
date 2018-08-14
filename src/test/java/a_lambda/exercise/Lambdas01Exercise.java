@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -31,6 +32,13 @@ public class Lambdas01Exercise {
     @Test
     public void sortPersonsByAge() {
         final Person[] persons = getPersons();
+
+        Arrays.sort(persons, new Comparator<Person>() {
+            @Override
+            public int compare(final Person o1, final Person o2) {
+                return Integer.compare(o1.getAge(), o2.getAge());
+            }
+        });
         // TODO use Arrays.sort and anonymous class
 
         assertArrayEquals(persons, new Person[]{
