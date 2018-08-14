@@ -9,9 +9,12 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.base.Optional;
+import com.google.common.collect.FluentIterable;
 
 import a_lambda.data.Person;
+
+
 
 public class Lambdas02Exercise {
 
@@ -35,6 +38,8 @@ public class Lambdas02Exercise {
         final Person[] persons = getPersons();
         // TODO use Arrays.sort and lambda
 
+        Arrays.sort(persons, (p1, p2) -> Integer.compare(p1.getAge(), p2.getAge()));
+
         assertArrayEquals(persons, new Person[]{
                 new Person("name 4", "lastName 7", 21),
                 new Person("name 5", "lastName 3", 22),
@@ -53,6 +58,12 @@ public class Lambdas02Exercise {
         final List<Person> persons = new ArrayList<>(Arrays.asList(getPersons()));
         Person person = null;
         // TODO use FluentIterable and lambda
+
+        final Optional<Person> personOptional = FluentIterable.from(persons).firstMatch((p) -> p.getAge() > 30);
+
+        if (personOptional.isPresent()) {
+            person = personOptional.get();
+        }
 
         assertEquals(person, new Person("name 2", "lastName 1", 33));
     }
