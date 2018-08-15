@@ -57,8 +57,9 @@ public class Lambdas02Exercise {
         final List<Person> persons = new ArrayList<>(Arrays.asList(getPersons()));
         Person person = null;
         // TODO use FluentIterable and lambda
-        Optional<Person> personOptional = FluentIterable.from(persons)
-                                                        .firstMatch((p) -> p.getAge() > 30);
+        Optional<Person> personOptional =
+            FluentIterable.from(persons)
+                          .firstMatch((p) -> p.getAge() > 30);
         if (personOptional.isPresent()) {
             person = personOptional.get();
         }

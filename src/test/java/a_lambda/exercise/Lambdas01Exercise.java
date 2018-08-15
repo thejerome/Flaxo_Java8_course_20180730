@@ -62,13 +62,14 @@ public class Lambdas01Exercise {
         final List<Person> persons = new ArrayList<>(Arrays.asList(getPersons()));
         Person person = null;
         // TODO use FluentIterable and anonymous class
-        Optional<Person> personOptional = FluentIterable.from(persons)
-                                                        .firstMatch(new Predicate<Person>() {
-                                                            @Override
-                                                            public boolean apply(@Nullable Person p) {
-                                                                return p.getAge() > 30;
-                                                            }
-                                                        });
+        Optional<Person> personOptional =
+            FluentIterable.from(persons)
+                          .firstMatch(new Predicate<Person>() {
+                            @Override
+                            public boolean apply(@Nullable Person p) {
+                              return p.getAge() > 30;
+                            }
+                          });
         if (personOptional.isPresent()) {
             person = personOptional.get();
         }
