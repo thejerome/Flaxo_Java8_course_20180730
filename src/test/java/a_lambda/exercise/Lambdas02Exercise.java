@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.FluentIterable;
 import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -35,6 +37,8 @@ public class Lambdas02Exercise {
         final Person[] persons = getPersons();
         // TODO use Arrays.sort and lambda
 
+        Arrays.sort(persons, (a, b) -> Integer.compare(a.getAge(), b.getAge()));
+
         assertArrayEquals(persons, new Person[]{
                 new Person("name 4", "lastName 7", 21),
                 new Person("name 5", "lastName 3", 22),
@@ -53,6 +57,11 @@ public class Lambdas02Exercise {
         final List<Person> persons = new ArrayList<>(Arrays.asList(getPersons()));
         Person person = null;
         // TODO use FluentIterable and lambda
+
+        Optional<Person> firstPersonOlderThan30 = FluentIterable
+                .from(persons).firstMatch(p -> p.getAge() > 30);
+
+        person = firstPersonOlderThan30.get();
 
         assertEquals(person, new Person("name 2", "lastName 1", 33));
     }
