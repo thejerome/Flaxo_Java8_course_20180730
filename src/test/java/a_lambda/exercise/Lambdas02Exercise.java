@@ -14,8 +14,6 @@ import com.google.common.collect.FluentIterable;
 
 import a_lambda.data.Person;
 
-
-
 public class Lambdas02Exercise {
 
 
