@@ -31,7 +31,7 @@ public class ArrowNotationExercise {
         assertEquals(true, compareAges.test(new Person("a", "b", 22), new Person("c", "d", 22)));
     }
 
-    String getFullName (Person p){
+    private String getFullName (Person p){
        StringBuilder sj = new StringBuilder();
        sj.append(p.getFirstName());
        sj.append(p.getLastName());
