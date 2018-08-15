@@ -34,6 +34,9 @@ public class Lambdas02Exercise {
     public void sortPersonsByAge() {
         final Person[] persons = getPersons();
         // TODO use Arrays.sort and lambda
+        Arrays.sort(persons, (person1, person2) -> {
+            return Integer.compare(person1.getAge(), person2.getAge());
+        });
 
         assertArrayEquals(persons, new Person[]{
                 new Person("name 4", "lastName 7", 21),
