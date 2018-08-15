@@ -3,8 +3,11 @@ package a_lambda.exercise;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.google.common.collect.FluentIterable;
+import com.google.common.base.Optional;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -34,6 +37,7 @@ public class Lambdas02Exercise {
     public void sortPersonsByAge() {
         final Person[] persons = getPersons();
         // TODO use Arrays.sort and lambda
+        Arrays.sort(persons, (p1, p2) -> Integer.compare(p1.getAge(), p2.getAge()));
 
         assertArrayEquals(persons, new Person[]{
                 new Person("name 4", "lastName 7", 21),
@@ -53,6 +57,11 @@ public class Lambdas02Exercise {
         final List<Person> persons = new ArrayList<>(Arrays.asList(getPersons()));
         Person person = null;
         // TODO use FluentIterable and lambda
+        Optional<Person> optionalPerson = FluentIterable
+            .from(persons)
+            .firstMatch(input -> input.getAge() > 30);
+
+        person = optionalPerson.get();
 
         assertEquals(person, new Person("name 2", "lastName 1", 33));
     }
