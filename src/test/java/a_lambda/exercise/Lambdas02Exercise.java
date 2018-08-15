@@ -7,7 +7,6 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.base.Optional;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
