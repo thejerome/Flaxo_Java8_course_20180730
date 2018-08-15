@@ -6,11 +6,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
 import org.junit.jupiter.api.Test;
 
 import a_lambda.data.Person;
+
+import javax.annotation.Nullable;
 
 public class Lambdas01Exercise {
 
@@ -31,6 +37,12 @@ public class Lambdas01Exercise {
     @Test
     public void sortPersonsByAge() {
         final Person[] persons = getPersons();
+        Arrays.sort(persons, new Comparator<Person>() {
+            @Override
+            public int compare(Person o1, Person o2) {
+                return Integer.compare(o1.getAge(),o2.getAge());
+            }
+        });
         // TODO use Arrays.sort and anonymous class
 
         assertArrayEquals(persons, new Person[]{
@@ -49,7 +61,16 @@ public class Lambdas01Exercise {
     @Test
     public void findFirstWithAgeGreaterThan30() {
         final List<Person> persons = new ArrayList<>(Arrays.asList(getPersons()));
-        Person person = null;
+        Person person;
+        Optional<Person> personOptional = FluentIterable.from(persons).firstMatch(new Predicate<Person>() {
+            @Override
+            public boolean apply(@Nullable Person input) {
+                if (input.getAge()>30)
+                return true;
+                return false;
+            }
+        });
+        person = personOptional.get();
         // TODO use FluentIterable and anonymous class
 
         assertEquals(person, new Person("name 2", "lastName 1", 33));
