@@ -7,7 +7,6 @@ import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 
-import javax.print.attribute.standard.Finishings;
 import org.junit.jupiter.api.Test;
 
 import a_lambda.data.Person;
@@ -42,11 +41,6 @@ public class ArrowNotationExercise {
     // ageOfPersonWithTheLongestFullName: (Person -> String) -> (Person, Person) -> int
     //
 
-    public static int ageOfPersonWithTheLongestFullName (Person p1, Person p2){
-        return ((p1.getFirstName()+p1.getLastName()).length() > (p2.getFirstName() + p2.getLastName()).length()) ? p1.getAge(): p2.getAge();
-    }
-
-
     @Test
     public void getAgeOfPersonWithTheLongestFullName() {
         // Person -> String
@@ -55,7 +49,8 @@ public class ArrowNotationExercise {
 
         // (Person, Person) -> Integer
         // TODO use ageOfPersonWithTheLongestFullName(getFullName)
-        final BiFunction<Person, Person, Integer> ageOfPersonWithTheLongestFullName = ArrowNotationExercise::ageOfPersonWithTheLongestFullName;
+        final BiFunction<Person, Person, Integer> ageOfPersonWithTheLongestFullName = (p1, p2) ->
+            (getFullName.apply(p1).length() > getFullName.apply(p2).length() ? p1.getAge() : p2.getAge());
 
         assertEquals(
                 Integer.valueOf(1),
