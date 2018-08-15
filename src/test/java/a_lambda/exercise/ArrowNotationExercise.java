@@ -1,11 +1,9 @@
 package a_lambda.exercise;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
-import java.util.function.DoublePredicate;
 import java.util.function.Function;
 
 import org.junit.jupiter.api.Test;
@@ -21,7 +19,6 @@ public class ArrowNotationExercise {
 
         assertEquals(Integer.valueOf(33), getAge.apply(new Person("", "", 33)));
     }
-
 
     @Test
     public void compareAges() {
