@@ -79,10 +79,10 @@ public class FunctionCombinationExercise {
         final Predicate<Person> hasEmptyFirstName = p -> p.getFirstName().isEmpty();
         final Predicate<Person> hasEmptyLastName = p -> p.getLastName().isEmpty();
 
-        final Predicate<Person> validateFirstName = null; // TODO use Predicate::negate
-        final Predicate<Person> validateLastName = null; // TODO use Predicate::negate
+        final Predicate<Person> validateFirstName = hasEmptyFirstName.negate(); // TODO use Predicate::negate
+        final Predicate<Person> validateLastName = hasEmptyLastName.negate(); // TODO use Predicate::negate
 
-        final Predicate<Person> validate = null; // TODO use Predicate::and
+        final Predicate<Person> validate = and(validateFirstName, validateLastName); // TODO use Predicate::and
 
         assertEquals(true, validate.test(new Person("a", "b", 0)));
         assertEquals(false, validate.test(new Person("", "b", 0)));
