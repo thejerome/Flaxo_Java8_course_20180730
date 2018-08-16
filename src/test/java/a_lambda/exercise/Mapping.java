@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.junit.jupiter.api.Test;
@@ -32,7 +33,12 @@ public class Mapping {
         // [T1, T2, T3] -> (T -> R) -> [R1, R2, R3]
         public <R> MapHelper<R> map(Function<T, R> f) {
             // TODO
-            throw new UnsupportedOperationException();
+            final List<R> result = new ArrayList<>();
+
+            list.forEach(t -> result.add(f.apply(t)));
+
+            return new MapHelper<>(result);
+            //throw new UnsupportedOperationException();
         }
 
         // [T] -> (T -> [R]) -> [R]
@@ -47,6 +53,16 @@ public class Mapping {
 
             return new MapHelper<R>(result);
         }
+    }
+
+    private List<JobHistoryEntry> addOneYear(List<JobHistoryEntry> list) {
+        list.forEach(e -> e.withDuration(e.getDuration() + 1));
+        return list;
+    }
+
+    private List<JobHistoryEntry> replacePositionByUpperCase(List<JobHistoryEntry> list) {
+        list.forEach(e -> e.withPosition(e.getPosition().toUpperCase()));
+        return list;
     }
 
     @Test
@@ -75,6 +91,9 @@ public class Mapping {
 
         final List<Employee> mappedEmployees =
                 new MapHelper<>(employees)
+                        .map(e -> e.withPerson(e.getPerson().withFirstName("John")))
+                        .map(e -> e.withJobHistory(addOneYear(e.getJobHistory())))
+                        .map(e -> e.withJobHistory(e.getJobHistory()))
                 /*
                 .map(TODO) // change name to John .map(e -> e.withPerson(e.getPerson().withFirstName("John")))
                 .map(TODO) // add 1 year to experience duration .map(e -> e.withJobHistory(addOneYear(e.getJobHistory())))
