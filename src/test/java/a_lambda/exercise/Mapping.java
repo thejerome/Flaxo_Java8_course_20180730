@@ -143,6 +143,7 @@ public class Mapping {
 
     }
 
+
     private static class LazyFlatMapHelper<T, R> {
 
         private final List<T> list;
@@ -201,9 +202,6 @@ public class Mapping {
             return new LazyFlatMapHelper<>(list, function.andThen(listMapper));
         }
     }
-
-
-
     @Test
     public void lazy_mapping() {
         final List<Employee> employees =
