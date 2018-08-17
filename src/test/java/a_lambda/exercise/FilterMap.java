@@ -53,9 +53,10 @@ public class FilterMap {
         public <R> LazyCollectionHelper<R> map(Function<T, R> function) {
             List<Container<Object, Object>> newActions = new ArrayList<>(actions);
             newActions.add(new Container<>((Function<Object, Object>) function));
-            List<R> newList = list.stream()
-                .map(function)
-                .collect(Collectors.toList());
+            List<R> newList = new ArrayList<>();
+            list.forEach(item -> {
+                newList.add(function.apply(item));
+            });
             return new LazyCollectionHelper<>(newList, newActions);
         }
 
