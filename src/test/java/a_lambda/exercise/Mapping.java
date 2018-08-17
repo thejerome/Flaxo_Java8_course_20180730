@@ -162,54 +162,6 @@ public class Mapping {
 
     }
 
-    private static class LazyFlatMapHelper<T, R> {
-        private final List<T> list;
-        private final Function<T, List<R>> function;
-
-        public LazyFlatMapHelper(List<T> list, Function<T, List<R>> function) {
-            this.list = list;
-            this.function = function;
-        }
-
-        public static <T> LazyFlatMapHelper<T, T> from(List<T> list) {
-            return new LazyFlatMapHelper<>(list, Collections::singletonList);
-        }
-
-        public List<R> force() {
-            final List<R> result = new LinkedList<>();
-            list.forEach(t -> result.addAll(function.apply(t)));
-            return result;
-        }
-
-        // TODO filter
-        // (T -> boolean) -> (T -> [T])
-        // filter: [T1, T2] -> (T -> boolean) -> [T2]
-        // flatMap": [T1, T2] -> (T -> [T]) -> [T2]
-
-        public <R2> LazyFlatMapHelper<T, R2> map(Function<R, R2> f) {
-            final Function<R, List<R2>> listFunction = rR2TorListR2(f);
-            return flatMap(listFunction);
-        }
-
-        // (R -> R2) -> (R -> [R2])
-        private <R2> Function<R, List<R2>> rR2TorListR2(Function<R, R2> f) {
-            return r -> Collections.singletonList(f.apply(r));
-        }
-
-        // TODO *
-        public <R2> LazyFlatMapHelper<T, R2> flatMap(Function<R, List<R2>> f) {
-            return new LazyFlatMapHelper<>(list, t -> {
-                final List<R2> result = new LinkedList<>();
-                function.apply(t).forEach(t1 -> {
-                    result.addAll(f.apply(t1));
-                });
-                return result;
-            });
-        }
-    }
-
-
-
     @Test
     public void lazy_mapping() {
         final List<Employee> employees =
@@ -246,68 +198,6 @@ public class Mapping {
                 .map(e -> e.withJobHistory(switchPositionCase(e.getJobHistory())))
 
                 .force();
-
-        final List<Employee> expectedResult =
-                Arrays.asList(
-                        new Employee(
-                                new Person("John", "Galt", 30),
-                                Arrays.asList(
-                                        new JobHistoryEntry(3, "dev", "epam"),
-                                        new JobHistoryEntry(2, "dev", "google")
-                                )),
-                        new Employee(
-                                new Person("John", "Doe", 40),
-                                Arrays.asList(
-                                        new JobHistoryEntry(4, "QA", "yandex"),
-                                        new JobHistoryEntry(2, "QA", "epam"),
-                                        new JobHistoryEntry(2, "dev", "abc")
-                                )),
-                        new Employee(
-                                new Person("John", "White", 50),
-                                Collections.singletonList(
-                                        new JobHistoryEntry(6, "QA", "epam")
-                                ))
-                );
-
-        assertEquals(mappedEmployees, expectedResult);
-    }
-
-    @Test
-    public void lazy_flat_mapping() {
-        final List<Employee> employees =
-                Arrays.asList(
-                        new Employee(
-                                new Person("a", "Galt", 30),
-                                Arrays.asList(
-                                        new JobHistoryEntry(2, "dev", "epam"),
-                                        new JobHistoryEntry(1, "dev", "google")
-                                )),
-                        new Employee(
-                                new Person("b", "Doe", 40),
-                                Arrays.asList(
-                                        new JobHistoryEntry(3, "qa", "yandex"),
-                                        new JobHistoryEntry(1, "qa", "epam"),
-                                        new JobHistoryEntry(1, "dev", "abc")
-                                )),
-                        new Employee(
-                                new Person("c", "White", 50),
-                                Collections.singletonList(
-                                        new JobHistoryEntry(5, "qa", "epam")
-                                ))
-                );
-
-        final List<Employee> mappedEmployees =
-                LazyFlatMapHelper.from(employees)
-                        /*
-                        .map(TODO) // change name to John
-                        .map(TODO) // add 1 year to experience duration
-                        .map(TODO) // replace qa with QA
-                        * */
-                        .map(e -> e.withPerson(e.getPerson().withFirstName("John")))
-                        .map(e -> e.withJobHistory(addOneYear(e.getJobHistory())))
-                        .map(e -> e.withJobHistory(switchPositionCase(e.getJobHistory())))
-
-                        .force();
 
         final List<Employee> expectedResult =
                 Arrays.asList(
