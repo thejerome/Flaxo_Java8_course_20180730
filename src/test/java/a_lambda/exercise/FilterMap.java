@@ -63,7 +63,16 @@ public class FilterMap {
                 return list;
             }
 
-            throw new UnsupportedOperationException();
+            actions.forEach(a -> {
+                if (a.getFunction() != null) {
+                    list.replaceAll(e -> (T) a.getFunction().apply(e));
+                } else {
+                    list.removeIf(a.getPredicate().negate());
+                }
+            });
+
+            return list;
+            //throw new UnsupportedOperationException();
         }
     }
 }
