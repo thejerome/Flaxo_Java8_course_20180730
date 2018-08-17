@@ -192,7 +192,6 @@ public class Mapping {
             return result;
         }
 
-        // TODO filter
         // (T -> boolean) -> (T -> [T])
         // filter: [T1, T2] -> (T -> boolean) -> [T2]
         // flatMap": [T1, T2] -> (T -> [T]) -> [T2]
@@ -211,10 +210,16 @@ public class Mapping {
             };
         }
 
-        // TODO *
         public <R2> LazyFlatMapHelper<T, R2> flatMap(Function<R, List<R2>> f) {
-            final List<T> result = new ArrayList<>();
-            throw new UnsupportedOperationException();
+            Function<List<R>, List<R2>> listMapper = rs -> {
+                final List<R2> result = new ArrayList<>();
+                for (R r : rs) {
+                    result.addAll(f.apply(r));
+                }
+                return result;
+            };
+
+            return new LazyFlatMapHelper<>(list, function.andThen(listMapper));
         }
     }
 
