@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class FilterMap {
 
@@ -50,13 +51,27 @@ public class FilterMap {
         }
 
         public <R> LazyCollectionHelper<R> map(Function<T, R> function) {
-            // TODO
-            throw new UnsupportedOperationException();
+            List<Container<Object, Object>> newActions = new ArrayList<>(actions);
+            newActions.add(new Container<>((Function<Object, Object>) function));
+            List<R> newList = list.stream()
+                .map(function)
+                .collect(Collectors.toList());
+            return new LazyCollectionHelper<>(newList, newActions);
         }
 
         public List<T> force() {
-            // TODO
-            throw new UnsupportedOperationException();
+            if (actions.isEmpty()) {
+                return list;
+            }
+
+            actions.forEach(container -> {
+                if (container.getPredicate() == null) {
+                    list.forEach(item -> container.getFunction().apply(item));
+                } else {
+                    list.forEach(item -> container.getPredicate().test(item));
+                }
+            });
+            return list;
         }
     }
 }
