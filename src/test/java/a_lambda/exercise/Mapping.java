@@ -116,26 +116,15 @@ public class Mapping {
     }
 
     private List<JobHistoryEntry> switchPositionCase(List<JobHistoryEntry> jobHistory) {
-        List<JobHistoryEntry> result = new LinkedList<>();
-
-        for (JobHistoryEntry jobHistoryEntry : jobHistory) {
-            String position = jobHistoryEntry.getPosition();
-
-            result.add("qa".equals(position) ?
-                    jobHistoryEntry.withPosition(position.toUpperCase()) : jobHistoryEntry);
-        }
-
-        return result;
+        return new MapHelper<>(jobHistory)
+                .map(j -> "qa".equals(j.getPosition()) ? j.withPosition(j.getPosition().toUpperCase()) : j)
+                .getList();
     }
 
     private List<JobHistoryEntry> addOneYear(List<JobHistoryEntry> jobHistory) {
-        List<JobHistoryEntry> result = new LinkedList<>();
-
-        for (JobHistoryEntry jobHistoryEntry : jobHistory) {
-            result.add(jobHistoryEntry.withDuration(jobHistoryEntry.getDuration() + 1));
-        }
-
-        return result;
+        return new MapHelper<>(jobHistory)
+                .map(j -> j.withDuration(j.getDuration() + 1))
+                .getList();
     }
 
 
