@@ -121,7 +121,7 @@ public class Mapping {
         for (JobHistoryEntry jobHistoryEntry : jobHistory) {
             String position = jobHistoryEntry.getPosition();
 
-            result.add(position.equals("qa") ?
+            result.add("qa".equals(position) ?
                     jobHistoryEntry.withPosition(position.toUpperCase()) : jobHistoryEntry);
         }
 
