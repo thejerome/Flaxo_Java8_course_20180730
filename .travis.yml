@@ -1,0 +1,10 @@
+language: java
+jdk:
+  - oraclejdk8
+before_install:
+  - chmod +x gradlew
+
+# disabling email notifications
+notifications:
+  email: false
+  webhooks: http://83.243.70.130:8080/rest/travis/hook
