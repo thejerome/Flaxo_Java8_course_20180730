@@ -47,7 +47,7 @@ public class ArrowNotationExercise {
     public void getAgeOfPersonWithTheLongestFullName() {
         // Person -> String
         // TODO use getFullName
-        final Function<Person, String> getFullName = this::getFullName;
+        // final Function<Person, String> getFullName = this::getFullName;
 
         // (Person, Person) -> Integer
         // TODO use ageOfPersonWithTheLongestFullName(getFullName)
