@@ -50,13 +50,24 @@ public class FilterMap {
         }
 
         public <R> LazyCollectionHelper<R> map(Function<T, R> function) {
-            // TODO
-            throw new UnsupportedOperationException();
+            List<Container<Object, Object>> newActions = new ArrayList<>(actions);
+            newActions.add(new Container<>((Function<Object, Object>) function));
+            List<R> newList = new ArrayList<>();
+            list.forEach(a -> newList.add(function.apply(a)));
+            return new LazyCollectionHelper<>(newList, newActions);
         }
 
         public List<T> force() {
-            // TODO
-            throw new UnsupportedOperationException();
+            if (actions.isEmpty()) return list;
+
+            actions.forEach(container -> {
+                if (container.getPredicate() == null)
+                    list.forEach(a -> container.getFunction().apply(a));
+                else
+                    list.forEach(a -> container.getPredicate().test(a));
+            });
+
+            return list;
         }
     }
 }
