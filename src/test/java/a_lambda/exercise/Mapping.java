@@ -133,7 +133,7 @@ public class Mapping {
 
         public LazyMapHelper(List<T> list, Function<T, R> function) {
             this.list = list;
-
+            this.function = function;
         }
 
         public static <T> LazyMapHelper<T, T> from(List<T> list) {
@@ -142,10 +142,11 @@ public class Mapping {
 
         public List<R> force() {
             // TODO
-            List<R> result = new ArrayList<>();
-            list.forEach(e -> result.add(function.apply(e)));
-            return result;
+            List<R> newList = new ArrayList<>();
+            list.forEach(e -> newList.add(function.apply(e)));
+            return newList;
         }
+
 
         public <R2> LazyMapHelper<T, R2> map(Function<R, R2> f) {
             // TODO
