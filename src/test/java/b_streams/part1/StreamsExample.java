@@ -28,10 +28,6 @@ import b_streams.data.Person;
 
 public class StreamsExample {
 
-    // https://github.com/java8-course/streams
-
-    // StreamsExercise1
-
     @Test
     public void checkJohnsLastNames() {
         final List<Employee> employees = getEmployees();
@@ -48,7 +44,7 @@ public class StreamsExample {
     }
 
     /**
-     * Промежуточные операсции
+     * Промежуточные операции
      */
     @Test
     public void operations() {
