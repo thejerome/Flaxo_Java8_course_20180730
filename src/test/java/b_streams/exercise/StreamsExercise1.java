@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
@@ -41,9 +42,16 @@ public class StreamsExercise1 {
             }
         }
 
-        List<Employee> epamEmployees = null;
+        List<Employee> epamEmployees = allEmployee.stream()
+                .filter(employee -> employee.getJobHistory()
+                        .containsAll(
+                                allEmployee.stream()
+                                        .flatMap(e -> e.getJobHistory().stream())
+                                        .filter(e -> "epam".equals(e.getEmployer()))
+                                        .collect(Collectors.toList())
+                        ))
+                .collect(Collectors.toList());
         // TODO all persons with experience in epam
-
 
 
         assertTrue(expected.size() == epamEmployees.size(), "Expected size" + expected.size());
@@ -62,7 +70,14 @@ public class StreamsExercise1 {
             }
         }
 
-        List<Employee> epamEmployees = null;
+        List<Employee> epamEmployees =
+                allEmployee.stream()
+                        .filter(e -> e.getJobHistory()
+                                .iterator()
+                                .next()
+                                .getEmployer()
+                                .equals("epam"))
+                        .collect(Collectors.toList());
         // TODO all persons with first experience in epam
 
         assertNotNull(epamEmployees);
@@ -86,7 +101,11 @@ public class StreamsExercise1 {
             }
         }
 
-         Integer result = null;//TODO sum of all durations in epam job histories
+        Integer result = employees.stream()
+                .flatMap(employee -> employee.getJobHistory().stream())
+                .filter(jobHistoryEntry -> "epam".equals(jobHistoryEntry.getEmployer()))
+                .mapToInt(JobHistoryEntry::getDuration).sum();;//TODO sum of all durations in epam job histories
+
          assertEquals(expected, result);
     }
 

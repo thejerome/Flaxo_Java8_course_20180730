@@ -2,7 +2,9 @@ package b_streams.data;
 
 import static java.util.stream.Collectors.toList;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
@@ -62,7 +64,12 @@ public class Generator {
 
     public static List<Employee> generateEmployeeList() {
         // TODO
-        throw new UnsupportedOperationException();
+        final List<Employee> employes = new ArrayList<>();
+
+        employes.add(new Employee(new Person("a", "b", 20),
+                Collections.singletonList(new JobHistoryEntry(0, "dev", "epam"))));
+
+        return employes;
     }
 
     /**
@@ -72,7 +79,8 @@ public class Generator {
      * @return list of employee
      */
     public static List<Employee> generateEmployeeListWithEpamExperience() {
-        final List<Employee> employees = generateEmployeeList();
+        final List<Employee> employees = new ArrayList<>();
+//        final List<Employee> employees = generateEmployeeList();
 
         final Employee employeeWithFistEpamExperience = new Employee(
                 new Person(
