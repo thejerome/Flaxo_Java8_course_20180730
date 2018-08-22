@@ -104,7 +104,7 @@ public class StreamsExercise1 {
         Integer result = employees.stream()
                 .flatMap(employee -> employee.getJobHistory().stream())
                 .filter(jobHistoryEntry -> "epam".equals(jobHistoryEntry.getEmployer()))
-                .mapToInt(JobHistoryEntry::getDuration).sum();;//TODO sum of all durations in epam job histories
+                .mapToInt(JobHistoryEntry::getDuration).sum();//TODO sum of all durations in epam job histories
 
          assertEquals(expected, result);
     }
