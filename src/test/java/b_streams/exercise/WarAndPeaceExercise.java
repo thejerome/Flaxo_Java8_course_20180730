@@ -17,10 +17,6 @@ import org.junit.jupiter.api.Test;
 import b_streams.data.WAPResult;
 
 public class WarAndPeaceExercise {
-
-    public WarAndPeaceExercise() {
-    }
-
     @Test
     public void warAndPeace() throws IOException {
 
@@ -48,13 +44,15 @@ public class WarAndPeaceExercise {
         try {
             return Files.lines(path, Charset.forName("windows-1251"));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new CustomException(e);
         }
+    }
+
+    private static class CustomException extends RuntimeException {
+        public CustomException(Exception e) {}
     }
     // TODO map lowercased words to its amount in text and concatenate its entries.
     // TODO If word "котик" occurred in text 23 times then its entry would be "котик - 23\n".
     // TODO Entries in final String should be also sorted by amount and then in alphabetical order if needed.
     // TODO Also omit any word with lengths less than 4 and frequency less than 10
 }
-
-
