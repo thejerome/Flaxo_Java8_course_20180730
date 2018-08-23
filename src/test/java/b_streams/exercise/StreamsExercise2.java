@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
@@ -25,11 +26,40 @@ public class StreamsExercise2 {
 
     // TODO class PersonEmployerPair
 
+    public class PersonEmployerPair{
+        private Person person;
+        private String employer;
+
+        public PersonEmployerPair(Person person, String employer) {
+            this.person = person;
+            this.employer = employer;
+        }
+
+        public Person getPerson() {
+            return person;
+        }
+
+        public void setPerson(Person person) {
+            this.person = person;
+        }
+
+        public String getEmployer() {
+            return employer;
+        }
+
+        public void setEmployer(String employer) {
+            this.employer = employer;
+        }
+    }
     @Test
     public void employersStuffLists() {
         final List<Employee> employees = getEmployees();
 
-        Map<String, List<Person>> employersStuffLists = null;
+        Map<String, List<Person>> employersStuffLists = employees
+                .stream()
+                .flatMap(employee -> employee.getJobHistory().stream().map(jhe -> new PersonEmployerPair(employee.getPerson(), jhe.getEmployer())))
+                .collect(Collectors.groupingBy(PersonEmployerPair::getEmployer, Collectors.mapping(PersonEmployerPair::getPerson, Collectors.toList())));
+
         // TODO map employer vs persons with job history related to it
 
         assertEquals(getExpectedEmployersStuffLists(), employersStuffLists);
@@ -39,7 +69,11 @@ public class StreamsExercise2 {
     public void indexByFirstEmployer() {
         final List<Employee> employees = getEmployees();
 
-        Map<String, List<Person>> employeesIndex = null;
+        Map<String, List<Person>> employeesIndex = employees
+                .stream()
+                .map(e -> new PersonEmployerPair(e.getPerson(), e.getJobHistory().get(0).getEmployer()))
+                .collect(Collectors.groupingBy(PersonEmployerPair::getEmployer, Collectors.mapping(PersonEmployerPair::getPerson, Collectors.toList())));
+        
         // TODO map employer vs persons with first job history related to it
 
         assertEquals(getExpectedEmployeesIndexByFirstEmployer(), employeesIndex);
