@@ -67,7 +67,13 @@ public class WarAndPeaceExercise {
         try {
             return Files.readAllLines(path, Charset.forName("windows-1251"));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    private class UncheckedIOException extends RuntimeException {
+        UncheckedIOException(Throwable var1) {
+            super(var1);
         }
     }
 }
