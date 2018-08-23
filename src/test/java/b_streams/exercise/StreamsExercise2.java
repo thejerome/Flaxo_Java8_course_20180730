@@ -2,10 +2,9 @@ package b_streams.exercise;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 
@@ -24,12 +23,42 @@ public class StreamsExercise2 {
     // https://youtu.be/i0Jr2l3jrDA Сергей Куксенко — Stream API, часть 2
 
     // TODO class PersonEmployerPair
+    static class PersonEmployerPair {
+
+        private Person person;
+        private String employer;
+
+        private PersonEmployerPair(Person person, String employer) {
+            this.employer = employer;
+            this.person = person;
+        }
+
+        public String getEmployer() {
+            return employer;
+        }
+
+        public Person getPerson() {
+            return person;
+        }
+
+        public static Stream<PersonEmployerPair> getPersonEmployerStream(Employee employee) {
+            List<PersonEmployerPair> personEmployerPairs = new LinkedList<>();
+            employee
+                    .getJobHistory()
+                    .forEach(jobHistoryEntry -> personEmployerPairs
+                            .add(new PersonEmployerPair(employee.getPerson(), jobHistoryEntry.getEmployer())));
+            return personEmployerPairs.stream();
+        }
+    }
 
     @Test
     public void employersStuffLists() {
         final List<Employee> employees = getEmployees();
 
-        Map<String, List<Person>> employersStuffLists = null;
+        Map<String, List<Person>> employersStuffLists = employees
+                .stream()
+                .flatMap(PersonEmployerPair::getPersonEmployerStream)
+                .collect(Collectors.groupingBy(PersonEmployerPair::getEmployer));
         // TODO map employer vs persons with job history related to it
 
         assertEquals(getExpectedEmployersStuffLists(), employersStuffLists);
