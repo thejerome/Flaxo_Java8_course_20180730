@@ -49,7 +49,9 @@ public class WarAndPeaceExercise {
     }
 
     private static class CustomException extends RuntimeException {
-        public CustomException(Exception e) {}
+        public CustomException(Exception e) {
+            super(e);
+        }
     }
     // TODO map lowercased words to its amount in text and concatenate its entries.
     // TODO If word "котик" occurred in text 23 times then its entry would be "котик - 23\n".
