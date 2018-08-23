@@ -90,8 +90,6 @@ public class StreamsExercise2 {
                         collectingAndThen(
                                 Collectors.maxBy(Comparator.comparing(PersonEmployerPair::getDuration)), p -> p.get().getPerson()
                         )));
-
-        System.out.println(employeesIndex);
         // TODO map employer vs person with greatest duration in it
 
         assertEquals(new Person("John", "White", 28), employeesIndex.get("epam"));

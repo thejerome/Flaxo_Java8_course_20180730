@@ -64,12 +64,80 @@ public class Generator {
 
     public static List<Employee> generateEmployeeList() {
         // TODO
-        final List<Employee> employes = new ArrayList<>();
-
-        employes.add(new Employee(new Person("a", "b", 20),
-                Collections.singletonList(new JobHistoryEntry(0, "dev", "epam"))));
-
-        return employes;
+        return new ArrayList<>(Arrays.asList(
+                new Employee(
+                        new Person("John", "Galt", 20),
+                        Arrays.asList(
+                                new JobHistoryEntry(3, "dev", "epam"),
+                                new JobHistoryEntry(2, "dev", "google")
+                        )),
+                new Employee(
+                        new Person("John", "Doe", 21),
+                        Arrays.asList(
+                                new JobHistoryEntry(4, "BA", "yandex"),
+                                new JobHistoryEntry(2, "QA", "epam"),
+                                new JobHistoryEntry(2, "dev", "abc")
+                        )),
+                new Employee(
+                        new Person("John", "White", 22),
+                        Collections.singletonList(
+                                new JobHistoryEntry(6, "QA", "epam")
+                        )),
+                new Employee(
+                        new Person("John", "Galt", 23),
+                        Arrays.asList(
+                                new JobHistoryEntry(3, "dev", "epam"),
+                                new JobHistoryEntry(2, "dev", "google")
+                        )),
+                new Employee(
+                        new Person("John", "Doe", 24),
+                        Arrays.asList(
+                                new JobHistoryEntry(4, "QA", "yandex"),
+                                new JobHistoryEntry(2, "BA", "epam"),
+                                new JobHistoryEntry(2, "dev", "abc")
+                        )),
+                new Employee(
+                        new Person("John", "White", 25),
+                        Collections.singletonList(
+                                new JobHistoryEntry(6, "QA", "epam")
+                        )),
+                new Employee(
+                        new Person("John", "Galt", 26),
+                        Arrays.asList(
+                                new JobHistoryEntry(3, "dev", "epam"),
+                                new JobHistoryEntry(1, "dev", "google")
+                        )),
+                new Employee(
+                        new Person("Bob", "Doe", 27),
+                        Arrays.asList(
+                                new JobHistoryEntry(4, "QA", "yandex"),
+                                new JobHistoryEntry(2, "QA", "epam"),
+                                new JobHistoryEntry(2, "dev", "abc")
+                        )),
+                new Employee(
+                        new Person("John", "White", 28),
+                        Collections.singletonList(
+                                new JobHistoryEntry(6, "BA", "epam")
+                        )),
+                new Employee(
+                        new Person("John", "Galt", 29),
+                        Arrays.asList(
+                                new JobHistoryEntry(3, "dev", "epam"),
+                                new JobHistoryEntry(1, "dev", "google")
+                        )),
+                new Employee(
+                        new Person("John", "Doe", 30),
+                        Arrays.asList(
+                                new JobHistoryEntry(4, "QA", "yandex"),
+                                new JobHistoryEntry(2, "QA", "epam"),
+                                new JobHistoryEntry(5, "dev", "abc")
+                        )),
+                new Employee(
+                        new Person("Bob", "White", 31),
+                        Collections.singletonList(
+                                new JobHistoryEntry(6, "QA", "epam")
+                        ))
+        ));
     }
 
     /**
@@ -79,8 +147,7 @@ public class Generator {
      * @return list of employee
      */
     public static List<Employee> generateEmployeeListWithEpamExperience() {
-        final List<Employee> employees = new ArrayList<>();
-//        final List<Employee> employees = generateEmployeeList();
+        final List<Employee> employees = generateEmployeeList();
 
         final Employee employeeWithFistEpamExperience = new Employee(
                 new Person(

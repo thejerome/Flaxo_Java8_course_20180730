@@ -43,16 +43,10 @@ public class StreamsExercise1 {
         }
 
         List<Employee> epamEmployees = allEmployee.stream()
-                .filter(employee -> employee.getJobHistory()
-                        .containsAll(
-                                allEmployee.stream()
-                                        .flatMap(e -> e.getJobHistory().stream())
-                                        .filter(e -> "epam".equals(e.getEmployer()))
-                                        .collect(Collectors.toList())
-                        ))
+                .filter(employee -> employee.getJobHistory().stream()
+                .anyMatch(entry -> entry.getEmployer().equals("epam")))
                 .collect(Collectors.toList());
         // TODO all persons with experience in epam
-
 
         assertTrue(expected.size() == epamEmployees.size(), "Expected size" + expected.size());
         assertTrue(expected.containsAll(epamEmployees), "Wrong result");
@@ -70,14 +64,13 @@ public class StreamsExercise1 {
             }
         }
 
-        List<Employee> epamEmployees =
-                allEmployee.stream()
-                        .filter(e -> e.getJobHistory()
-                                .iterator()
-                                .next()
-                                .getEmployer()
-                                .equals("epam"))
-                        .collect(Collectors.toList());
+        List<Employee> epamEmployees = allEmployee.stream()
+                .filter(employee -> employee.getJobHistory()
+                        .stream()
+                        .findFirst()
+                        .filter(entry -> "epam".equals(entry.getEmployer()))
+                        .isPresent())
+                .collect(Collectors.toList());
         // TODO all persons with first experience in epam
 
         assertNotNull(epamEmployees);
