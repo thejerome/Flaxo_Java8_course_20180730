@@ -66,7 +66,11 @@ public class StreamsExercise1 {
 
         // TODO all persons with first experience in epam
         List<Employee> epamEmployees = allEmployee.stream()
-                .filter(employee -> "epam".equals(employee.getJobHistory().get(0).getEmployer()))
+                .filter(employee -> employee.getJobHistory()
+                        .stream()
+                        .findFirst()
+                        .filter(jobHistoryEntry->"epam".equals(jobHistoryEntry.getEmployer()))
+                        .isPresent())
                 .collect(Collectors.toList());
 
         assertNotNull(epamEmployees);
