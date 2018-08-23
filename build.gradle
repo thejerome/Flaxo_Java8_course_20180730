@@ -1,15 +1,7 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.1.0'
-    }
+plugins {
+    id "java" 
+    id "org.junit.platform.gradle.plugin" version "1.1.0"
 }
-
-apply plugin: 'java'
-apply plugin: 'org.junit.platform.gradle.plugin'
-
 repositories {
     mavenCentral()
     jcenter()
@@ -18,7 +10,5 @@ dependencies {
     testCompile "org.junit.jupiter:junit-jupiter-api:5.2.0"
     testCompile "org.apache.commons:commons-lang3:3.4"
     testCompile "com.google.guava:guava:22.0"
-    testCompile "org.openjdk.jmh:jmh-core:1.21"
-    testCompile "org.openjdk.jmh:jmh-generator-annprocess:1.21"
     testRuntime "org.junit.jupiter:junit-jupiter-engine:5.2.0"
 }

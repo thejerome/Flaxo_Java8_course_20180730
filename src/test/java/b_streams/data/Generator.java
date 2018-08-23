@@ -9,6 +9,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+/**
+ * @author Simon Popugaev
+ */
 public class Generator {
 
     public static String generateString() {
