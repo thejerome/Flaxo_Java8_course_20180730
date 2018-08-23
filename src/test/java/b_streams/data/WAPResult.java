@@ -6,10 +6,10 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.stream.Collectors;
 
-public class WNPResult {
+public class WAPResult {
     public final String result;
 
-    public WNPResult() throws IOException {
-        result = readAllLines(Paths.get("WNPResult.txt")).stream().collect(Collectors.joining("\n"));
+    public WAPResult() throws IOException {
+        result = readAllLines(Paths.get("src", "test","resources", "WAPResult.txt")).stream().collect(Collectors.joining("\n"));
     }
 }
