@@ -33,7 +33,21 @@ public class WarAndPeaceExercise {
                         return null;
                     }
                 })
-
+                .map(String::toLowerCase)
+                .map(string -> string.replaceAll("[^a-zA-Zа-яА-Я]", " "))
+                .flatMap(string -> Arrays.stream(string.split("[\\s,.!]+")))
+                .filter(string -> string.length() > 3)
+                .collect(Collectors.groupingBy(String::toString, Collectors.counting()))
+                .entrySet()
+                .stream()
+                .sorted((o1, o2) ->
+                        o1.getValue().equals(o2.getValue())
+                                ? o1.getKey().compareTo(o2.getKey())
+                                : o2.getValue().compareTo(o1.getValue()))
+                .filter(entry -> entry.getValue() > 9)
+                .map(entry -> entry.getKey() + " - " + entry.getValue() + "\n")
+                .collect(Collectors.joining())
+                .trim();
         // TODO map lowercased words to its amount in text and concatenate its entries.
         // TODO If word "котик" occurred in text 23 times then its entry would be "котик - 23\n".
         // TODO Entries in final String should be also sorted by amount and then in alphabetical order if needed.
