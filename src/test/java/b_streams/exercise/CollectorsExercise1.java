@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,10 +20,49 @@ import b_streams.data.Person;
 
 public class CollectorsExercise1 {
 
+    private static class PersonEmployerPair{
+        private Person person;
+        private String string;
+        private int duration;
+
+        public PersonEmployerPair(Person person, String string) {
+            this.person = person;
+            this.string = string;
+            this.duration = 0;
+        }
+
+        public PersonEmployerPair(Person person, String string, int duration) {
+            this.person = person;
+            this.string = string;
+            this.duration = duration;
+        }
+
+        public int getDuration() {
+            return duration;
+        }
+
+        public Person getPerson() {
+            return person;
+        }
+
+        public String getString() {
+            return string;
+        }
+    }
     @Test
     public void testPersonToHisLongestJobDuration() {
 
-        Map<Person, Integer> collected = null;//getEmployees()
+        Map<Person, Integer> collected = getEmployees().stream()
+            .flatMap(employee -> employee.getJobHistory().stream()
+                .map(jobHistoryEntry -> new PersonEmployerPair(employee.getPerson(),
+                    jobHistoryEntry.getEmployer(), jobHistoryEntry.getDuration()))
+            )
+            .sorted(Comparator.comparingInt(PersonEmployerPair::getDuration))
+            .collect(
+                HashMap::new,
+                (hashMap, personEmployerPair) -> hashMap.put(personEmployerPair.getPerson(), personEmployerPair.getDuration()),
+                HashMap::putAll
+            );
 
         Map<Person, Integer> expected = ImmutableMap.<Person, Integer>builder()
                 .put(new Person("John", "Galt", 20), 3)
@@ -43,7 +84,17 @@ public class CollectorsExercise1 {
     @Test
     public void testPersonToHisTotalJobDuration() {
 
-        Map<Person, Integer> collected = null;
+        Map<Person, Integer> collected = getEmployees().stream()
+            .flatMap(employee -> employee.getJobHistory().stream()
+                .map(jobHistoryEntry -> new PersonEmployerPair(employee.getPerson(),
+                    jobHistoryEntry.getEmployer(), jobHistoryEntry.getDuration()))
+            )
+            .collect(
+                HashMap::new,
+                (hashMap, personEmployerPair) -> hashMap.put(personEmployerPair.getPerson(), hashMap.getOrDefault(personEmployerPair.getPerson(), 0)
+                    + personEmployerPair.getDuration()),
+                HashMap::putAll
+            );
 
 
         Map<Person, Integer> expected = ImmutableMap.<Person, Integer>builder()
@@ -68,7 +119,19 @@ public class CollectorsExercise1 {
     public void testTotalJobDurationPerNameAndSurname(){
 
         //Implement custom Collector
-        Map<String, Integer> collected = null;
+        Map<String, Integer> collected = getEmployees().stream()
+            .flatMap(employee -> employee.getJobHistory().stream()
+                .map(jobHistoryEntry -> new PersonEmployerPair(employee.getPerson(),
+                    jobHistoryEntry.getEmployer(), jobHistoryEntry.getDuration()))
+            )
+            .collect(
+                HashMap::new, (hashMap, personEmployerPair) ->
+                {
+                  hashMap.put(personEmployerPair.getPerson().getLastName(), hashMap.getOrDefault(personEmployerPair.getPerson().getLastName(), 0) + personEmployerPair.getDuration());
+                  hashMap.put(personEmployerPair.getPerson().getFirstName(), hashMap.getOrDefault(personEmployerPair.getPerson().getFirstName(), 0) + personEmployerPair.getDuration());
+                },
+                HashMap::putAll
+            );
 
         Map<String, Integer> expected = ImmutableMap.<String, Integer>builder()
                 .put("John", 5 + 8 + 6 + 5 + 8 + 6 + 4 + 8 + 6 + 4 + 11 + 6 - 8 - 6)
