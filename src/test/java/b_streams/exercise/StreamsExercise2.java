@@ -2,7 +2,6 @@ package b_streams.exercise;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
