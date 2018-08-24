@@ -19,7 +19,15 @@ public class CollectorsExercise1 {
     @Test
     public void testPersonToHisLongestJobDuration() {
 
-        Map<Person, Integer> collected = getEmployees().stream().collect(Collectors.groupingBy());//getEmployees()
+        Map<Person, Integer> collected = getEmployees()
+                .stream()
+                .collect(
+                        Collectors.toMap(
+                                Employee::getPerson, employee -> employee.getJobHistory()
+                                        .stream()
+                                        .mapToInt(JobHistoryEntry::getDuration)
+                                        .max()
+                                        .orElseThrow(NoSuchElementException::new)));//getEmployees()
 
         Map<Person, Integer> expected = ImmutableMap.<Person, Integer>builder()
                 .put(new Person("John", "Galt", 20), 3)
@@ -41,7 +49,14 @@ public class CollectorsExercise1 {
     @Test
     public void testPersonToHisTotalJobDuration() {
 
-        Map<Person, Integer> collected = null;
+        Map<Person, Integer> collected = getEmployees()
+                .stream()
+                .collect(
+                        Collectors.toMap(
+                                Employee::getPerson, employee -> employee.getJobHistory()
+                                        .stream()
+                                        .mapToInt(JobHistoryEntry::getDuration)
+                                        .sum()));
 
 
         Map<Person, Integer> expected = ImmutableMap.<Person, Integer>builder()
@@ -66,7 +81,25 @@ public class CollectorsExercise1 {
     public void testTotalJobDurationPerNameAndSurname(){
 
         //Implement custom Collector
-        Map<String, Integer> collected = null;
+        Map<String, Integer> collected = getEmployees()
+                .stream()
+                .collect(
+                        HashMap::new, (map, employee)
+                                -> employee
+                                .getJobHistory()
+                                .stream()
+                                .mapToInt(JobHistoryEntry::getDuration)
+                                .forEach(d -> {
+                                    map.put(
+                                            employee.getPerson().getFirstName(),
+                                            map.getOrDefault(employee.getPerson().getFirstName(), 0) + d
+                                    );
+                                    map.put(
+                                            employee.getPerson().getLastName(),
+                                            map.getOrDefault(employee.getPerson().getLastName(), 0) + d
+                                    );
+                                }),
+                        HashMap::putAll);
 
         Map<String, Integer> expected = ImmutableMap.<String, Integer>builder()
                 .put("John", 5 + 8 + 6 + 5 + 8 + 6 + 4 + 8 + 6 + 4 + 11 + 6 - 8 - 6)
