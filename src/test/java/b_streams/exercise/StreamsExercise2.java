@@ -91,8 +91,17 @@ public class StreamsExercise2 {
 
     @Test
     public void greatestExperiencePerEmployer() {
-        Map<String, Person> employeesIndex = null;
         // TODO map employer vs person with greatest duration in it
+        final List<Employee> employees = getEmployees();
+        Map<String, Person> employeesIndex = employees.stream()
+                .flatMap(employee -> employee.getJobHistory().stream()
+                        .map(jobHistoryEntry ->
+                                new PersonEmployerPair(employee.getPerson(), jobHistoryEntry.getEmployer(),
+                                        jobHistoryEntry.getDuration())))
+                .collect(Collectors.groupingBy(PersonEmployerPair::getEmployer,
+                         Collectors.collectingAndThen(Collectors.maxBy(Comparator.comparing(PersonEmployerPair::getDuration)),
+                                personEmployerPair -> personEmployerPair.map(PersonEmployerPair::getPerson)
+                                                                        .orElse(null))));
 
         assertEquals(new Person("John", "White", 28), employeesIndex.get("epam"));
     }
