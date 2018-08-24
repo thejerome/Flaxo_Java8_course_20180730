@@ -2,10 +2,8 @@ package b_streams.exercise;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
@@ -29,10 +27,24 @@ public class StreamsExercise2 {
     public class PersonEmployerPair{
         private Person person;
         private String employer;
+        private int duration;
 
         public PersonEmployerPair(Person person, String employer) {
             this.person = person;
             this.employer = employer;
+        }
+        public PersonEmployerPair(Person person, String employer, int duration){
+            this.person = person;
+            this.employer = employer;
+            this.duration = duration;
+        }
+
+        public int getDuration() {
+            return duration;
+        }
+
+        public void setDuration(int duration) {
+            this.duration = duration;
         }
 
         public Person getPerson() {
@@ -82,7 +94,16 @@ public class StreamsExercise2 {
 
     @Test
     public void greatestExperiencePerEmployer() {
-        Map<String, Person> employeesIndex = null;
+        final List<Employee> employees = getEmployees();
+
+        Map<String, Person> employeesIndex = employees
+                .stream()
+                .flatMap(e -> e.getJobHistory().stream().map(jhe -> new PersonEmployerPair(e.getPerson(), jhe.getEmployer(), jhe.getDuration())))
+                .collect(Collectors.groupingBy(PersonEmployerPair::getEmployer, Collectors.collectingAndThen(Collectors.maxBy(Comparator.comparing(PersonEmployerPair::getDuration)), p -> p.get().getPerson())));
+
+
+
+
         // TODO map employer vs person with greatest duration in it
 
         assertEquals(new Person("John", "White", 28), employeesIndex.get("epam"));
