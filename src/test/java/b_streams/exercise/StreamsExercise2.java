@@ -2,7 +2,6 @@ package b_streams.exercise;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.security.cert.CollectionCertStoreParameters;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -25,9 +24,9 @@ public class StreamsExercise2 {
 
     // TODO class PersonEmployerPair
     class PersonEmployerPair {
-        Person employee;
-        String employer;
-        int duration;
+        private Person employee;
+        private String employer;
+        private int duration;
 
         public int getDuration() {
             return duration;
