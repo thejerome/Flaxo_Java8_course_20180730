@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import java.util.function.BiConsumer;
-import java.util.function.IntConsumer;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
