@@ -3,6 +3,7 @@ package b_streams.exercise;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,7 +32,7 @@ public class WarAndPeaceExercise {
                     try {
                         return Files.lines(path, Charset.forName("windows-1251"));
                     } catch (IOException e) {
-                        throw new RuntimeException(e.getMessage());
+                        throw new UncheckedIOException(e);
                     }
                 })
                 .map(s -> s.replaceAll("[^\\p{L}]+", " "))
