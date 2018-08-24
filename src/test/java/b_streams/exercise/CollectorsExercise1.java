@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +22,9 @@ public class CollectorsExercise1 {
     @Test
     public void testPersonToHisLongestJobDuration() {
 
-        Map<Person, Integer> collected = null;//getEmployees()
+        Map<Person, Integer> collected = getEmployees()
+                .stream()
+                .collect(Collectors.toMap(Employee::getPerson, employee -> employee.getJobHistory().stream().mapToInt(JobHistoryEntry::getDuration).max().getAsInt()));//getEmployees()
 
         Map<Person, Integer> expected = ImmutableMap.<Person, Integer>builder()
                 .put(new Person("John", "Galt", 20), 3)
@@ -43,8 +46,9 @@ public class CollectorsExercise1 {
     @Test
     public void testPersonToHisTotalJobDuration() {
 
-        Map<Person, Integer> collected = null;
-
+        Map<Person, Integer> collected = getEmployees()
+                .stream()
+                .collect(Collectors.toMap(Employee::getPerson, employee -> employee.getJobHistory().stream().mapToInt(JobHistoryEntry::getDuration).sum()));
 
         Map<Person, Integer> expected = ImmutableMap.<Person, Integer>builder()
                 .put(new Person("John", "Galt", 20), 5)
@@ -65,7 +69,7 @@ public class CollectorsExercise1 {
     }
 
     @Test
-    public void testTotalJobDurationPerNameAndSurname(){
+    public void testTotalJobDurationPerNameAndSurname() {
 
         //Implement custom Collector
         Map<String, Integer> collected = null;
