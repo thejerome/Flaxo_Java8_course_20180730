@@ -17,6 +17,18 @@ import a_lambda.data.Person;
 
 public class Mapping {
 
+    private final Function<Employee, Employee> changeNameToJohnFunction = e -> e.withPerson(e.getPerson().withFirstName("John"));
+    private final Function<Employee, Employee> addOneYearToAllJobEntriesFunction = e ->
+            e.withJobHistory(new MapHelper<>(e.getJobHistory())
+                    .map(entry -> entry.withDuration(entry.getDuration() + 1))
+                    .getList()
+            );
+    private final Function<Employee, Employee> capitalizeQAFunction = e ->
+            e.withJobHistory(new MapHelper<>(e.getJobHistory())
+                    .map(entry -> "qa".equals(entry.getPosition()) ? entry.withPosition("QA") : entry)
+                    .getList()
+            );
+
     private static class MapHelper<T> {
         private final List<T> list;
 
@@ -31,8 +43,11 @@ public class Mapping {
         // [T] -> (T -> R) -> [R]
         // [T1, T2, T3] -> (T -> R) -> [R1, R2, R3]
         public <R> MapHelper<R> map(Function<T, R> f) {
-            // TODO
-            throw new UnsupportedOperationException();
+            final List<R> result = new ArrayList<>(list.size());
+            list.forEach((T t) ->
+                    result.add(f.apply(t))
+            );
+            return new MapHelper<>(result);
         }
 
         // [T] -> (T -> [R]) -> [R]
@@ -75,6 +90,9 @@ public class Mapping {
 
         final List<Employee> mappedEmployees =
                 new MapHelper<>(employees)
+                        .map(changeNameToJohnFunction)
+                        .map(addOneYearToAllJobEntriesFunction)
+                        .map(capitalizeQAFunction)
                 /*
                 .map(TODO) // change name to John .map(e -> e.withPerson(e.getPerson().withFirstName("John")))
                 .map(TODO) // add 1 year to experience duration .map(e -> e.withJobHistory(addOneYear(e.getJobHistory())))
@@ -109,8 +127,12 @@ public class Mapping {
 
 
     private static class LazyMapHelper<T, R> {
+        private final List<T> list;
+        private final Function<T, R> function;
 
         public LazyMapHelper(List<T> list, Function<T, R> function) {
+            this.list = list;
+            this.function = function;
         }
 
         public static <T> LazyMapHelper<T, T> from(List<T> list) {
@@ -118,13 +140,15 @@ public class Mapping {
         }
 
         public List<R> force() {
-            // TODO
-            throw new UnsupportedOperationException();
+            List<R> newList = new ArrayList<>(list.size());
+            list.forEach(element ->
+                    newList.add(function.apply(element))
+            );
+            return newList;
         }
 
         public <R2> LazyMapHelper<T, R2> map(Function<R, R2> f) {
-            // TODO
-            throw new UnsupportedOperationException();
+            return new LazyMapHelper<>(list, element -> f.apply(function.apply(element)));
         }
 
     }
@@ -155,6 +179,9 @@ public class Mapping {
 
         final List<Employee> mappedEmployees =
                 LazyMapHelper.from(employees)
+                        .map(changeNameToJohnFunction)
+                        .map(addOneYearToAllJobEntriesFunction)
+                        .map(capitalizeQAFunction)
                 /*
                 .map(TODO) // change name to John
                 .map(TODO) // add 1 year to experience duration
