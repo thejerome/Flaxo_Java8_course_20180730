@@ -75,7 +75,7 @@ public class StreamsExercise1 {
                 .filter(jobHistoryEntry -> "epam".equals(jobHistoryEntry.getEmployer()))
                 .isPresent()
             )
-            .collect(Collectors.toList());;
+            .collect(Collectors.toList());
 
         assertNotNull(epamEmployees);
         assertFalse(epamEmployees.isEmpty());
