@@ -2,6 +2,7 @@ package b_streams.data;
 
 import static java.util.stream.Collectors.toList;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -61,8 +62,12 @@ public class Generator {
     }
 
     public static List<Employee> generateEmployeeList() {
-        // TODO
-        throw new UnsupportedOperationException();
+        final int howMuch = 10;
+        List<Employee> employeeList = new ArrayList<>(howMuch);
+        for (int i = 0; i < howMuch; ++i) {
+            employeeList.add(generateEmployee());
+        }
+        return employeeList;
     }
 
     /**
