@@ -2,10 +2,9 @@ package b_streams.exercise;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.security.cert.CollectionCertStoreParameters;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
@@ -16,6 +15,8 @@ import b_streams.data.Employee;
 import b_streams.data.JobHistoryEntry;
 import b_streams.data.Person;
 
+
+
 public class StreamsExercise2 {
     // https://youtu.be/kxgo7Y4cdA8 Сергей Куксенко и Алексей Шипилёв — Через тернии к лямбдам, часть 1
     // https://youtu.be/JRBWBJ6S4aU Сергей Куксенко и Алексей Шипилёв — Через тернии к лямбдам, часть 2
@@ -24,13 +25,42 @@ public class StreamsExercise2 {
     // https://youtu.be/i0Jr2l3jrDA Сергей Куксенко — Stream API, часть 2
 
     // TODO class PersonEmployerPair
+    class PersonEmployerPair{
+        Person employee;
+        String employer;
+
+        public Person getEmployee() {
+            return employee;
+        }
+
+        public void setEmployee(Person employee) {
+            this.employee = employee;
+        }
+
+        public String getEmployer() {
+            return employer;
+        }
+
+        public void setEmployer(String employer) {
+            this.employer = employer;
+        }
+
+        public PersonEmployerPair(Person employee, String employer) {
+            this.employee = employee;
+            this.employer = employer;
+        }
+    }
 
     @Test
     public void employersStuffLists() {
         final List<Employee> employees = getEmployees();
 
-        Map<String, List<Person>> employersStuffLists = null;
-        // TODO map employer vs persons with job history related to it
+
+        Map<String, List<Employee>> employersStuffLists = employees.stream()
+                .flatMap(employee -> employee.getJobHistory().stream()
+                        .map(jobHistoryEntry -> new PersonEmployerPair(employee.getPerson(), jobHistoryEntry.getEmployer()))
+                ).collect(Collectors.groupingBy((PersonEmployerPair::getEmployer)));
+        System.out.println(employersStuffLists);
 
         assertEquals(getExpectedEmployersStuffLists(), employersStuffLists);
     }
