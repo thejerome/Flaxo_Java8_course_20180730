@@ -30,9 +30,9 @@ public class StreamsExercise2 {
     // TODO class PersonEmployerTuple
     static class PersonEmployerTuple {
 
-      final String employer;
-      final Person person;
-      final int duration;
+      private final String employer;
+      private final Person person;
+      private final int duration;
 
       public PersonEmployerTuple(String employer, Person person, int duration) {
         this.employer = employer;
