@@ -3,6 +3,7 @@ package b_streams.exercise;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,8 +29,9 @@ public class WarAndPeaceExercise {
         String result = pathStream.flatMap(path -> {
             try {
                 return Files.lines(path, Charset.forName("Windows-1251"));
-            } catch (IOException ignored) {            }
-            return null;
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
         })
                 .flatMap(s -> Arrays.stream(s.trim().replaceAll("[^\\p{L}]+", " ").split("\\s")))
                 .map(String::toLowerCase)
