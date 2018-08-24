@@ -10,12 +10,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.joining;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class WarAndPeaceExercise {
@@ -29,11 +29,9 @@ public class WarAndPeaceExercise {
     @Test
     public void warAndPeace() throws IOException {
 
-        StringBuilder result = new StringBuilder();
-
-        Stream.of(Paths.get("src", "test", "resources", "WAP12.txt"),
+        String result = Stream.of(Paths.get("src", "test", "resources", "WAP12.txt"),
                 Paths.get("src", "test", "resources", "WAP34.txt"))
-                .flatMap(path -> readFromPath(path).stream()) // to stream of lines
+                .flatMap(this::readFromPath) // to stream of lines
                 .map(String::toLowerCase) // to lower case
                 .flatMap(s -> Arrays.stream(s.split("[^a-zа-яё]"))) // to stream of words
                 .filter(s -> s.length() >= 4) // remove short words
@@ -48,24 +46,18 @@ public class WarAndPeaceExercise {
                                 stringLongEntry1.getValue()
                         ))
                 .map(stringLongEntry -> // build result strings "word - frequency\n"
-                        new StringBuilder(stringLongEntry.getKey())
-                                .append(" - ")
-                                .append(stringLongEntry.getValue()).toString()
+                        stringLongEntry.getKey() +
+                                " - " +
+                                stringLongEntry.getValue()
                 )
-                .collect(Collectors.toList())
-                .forEach(s -> {
-                    if (result.length() != 0) {
-                        result.append('\n');
-                    }
-                    result.append(s);
-                });
+                .collect(joining("\n"));
 
-        assertEquals(new WAPResult().result, result.toString());
+        assertEquals(new WAPResult().result, result);
     }
 
-    private List<String> readFromPath(Path path) {
+    private Stream<String> readFromPath(Path path) {
         try {
-            return Files.readAllLines(path, Charset.forName("windows-1251"));
+            return Files.lines(path, Charset.forName("windows-1251"));
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
