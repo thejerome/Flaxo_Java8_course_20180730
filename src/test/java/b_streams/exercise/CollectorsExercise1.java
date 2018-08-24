@@ -5,11 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableMap;
@@ -53,15 +53,11 @@ public class CollectorsExercise1 {
     public void testPersonToHisLongestJobDuration() {
 
         Map<Person, Integer> collected = getEmployees().stream()
-            .flatMap(employee -> employee.getJobHistory().stream()
-                .map(jobHistoryEntry -> new PersonEmployerPair(employee.getPerson(),
-                    jobHistoryEntry.getEmployer(), jobHistoryEntry.getDuration()))
-            )
-            .sorted(Comparator.comparingInt(PersonEmployerPair::getDuration))
-            .collect(
-                HashMap::new,
-                (hashMap, personEmployerPair) -> hashMap.put(personEmployerPair.getPerson(), personEmployerPair.getDuration()),
-                HashMap::putAll
+            .collect(Collectors.toMap(o -> o.getPerson(), o -> o.getJobHistory().stream()
+                    .mapToInt(JobHistoryEntry::getDuration)
+                    .max()
+                    .orElse(0)
+                )
             );
 
         Map<Person, Integer> expected = ImmutableMap.<Person, Integer>builder()
@@ -85,16 +81,9 @@ public class CollectorsExercise1 {
     public void testPersonToHisTotalJobDuration() {
 
         Map<Person, Integer> collected = getEmployees().stream()
-            .flatMap(employee -> employee.getJobHistory().stream()
-                .map(jobHistoryEntry -> new PersonEmployerPair(employee.getPerson(),
-                    jobHistoryEntry.getEmployer(), jobHistoryEntry.getDuration()))
-            )
-            .collect(
-                HashMap::new,
-                (hashMap, personEmployerPair) -> hashMap.put(personEmployerPair.getPerson(), hashMap.getOrDefault(personEmployerPair.getPerson(), 0)
-                    + personEmployerPair.getDuration()),
-                HashMap::putAll
-            );
+                .collect(Collectors.toMap(o -> o.getPerson(), o -> o.getJobHistory().stream()
+                    .mapToInt(JobHistoryEntry::getDuration)
+                .sum()));
 
 
         Map<Person, Integer> expected = ImmutableMap.<Person, Integer>builder()
@@ -125,10 +114,10 @@ public class CollectorsExercise1 {
                     jobHistoryEntry.getEmployer(), jobHistoryEntry.getDuration()))
             )
             .collect(
-                HashMap::new, (hashMap, personEmployerPair) ->
+                HashMap::new, (map, pair) ->
                 {
-                  hashMap.put(personEmployerPair.getPerson().getLastName(), hashMap.getOrDefault(personEmployerPair.getPerson().getLastName(), 0) + personEmployerPair.getDuration());
-                  hashMap.put(personEmployerPair.getPerson().getFirstName(), hashMap.getOrDefault(personEmployerPair.getPerson().getFirstName(), 0) + personEmployerPair.getDuration());
+                  map.put(pair.getPerson().getLastName(), map.getOrDefault(pair.getPerson().getLastName(), 0) + pair.getDuration());
+                  map.put(pair.getPerson().getFirstName(), map.getOrDefault(pair.getPerson().getFirstName(), 0) + pair.getDuration());
                 },
                 HashMap::putAll
             );
