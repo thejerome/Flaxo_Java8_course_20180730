@@ -2,10 +2,7 @@ package b_streams.exercise;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
@@ -81,7 +78,14 @@ public class StreamsExercise2 {
 
     @Test
     public void greatestExperiencePerEmployer() {
-        Map<String, Person> employeesIndex = null;
+        List<Employee> employees = getEmployees();
+        Map<String, Person> employeesIndex = employees.stream()
+                .flatMap(employee -> employee.getJobHistory().stream()
+                        .map(jobHistoryEntry -> new PersonEmployerPair(employee.getPerson(), jobHistoryEntry.getEmployer(), jobHistoryEntry.getDuration())))
+                .collect(Collectors.groupingBy(PersonEmployerPair::getEmployer,
+                        Collectors.collectingAndThen(
+                                Collectors.maxBy(Comparator.comparing(PersonEmployerPair::getDuration)),
+                                personEmployerPair -> personEmployerPair.map(PersonEmployerPair::getPerson).orElse(null))));
         // TODO map employer vs person with greatest duration in it
 
         assertEquals(new Person("John", "White", 28), employeesIndex.get("epam"));
