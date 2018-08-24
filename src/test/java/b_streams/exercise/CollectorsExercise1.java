@@ -86,7 +86,7 @@ public class CollectorsExercise1 {
                         // supplier
                         HashMap::new,
 
-                        // biConsumer
+                        // accumulator
                         (Map<String, Integer> result, Employee employee) -> employee.getJobHistory().stream()
                                 .mapToInt(JobHistoryEntry::getDuration)
                                 .forEach(duration -> {
@@ -96,7 +96,7 @@ public class CollectorsExercise1 {
                                             (k, v) -> (v == null) ? duration : v + duration);
                                 }),
 
-                        // binaryOperator
+                        // combiner
                         (stringIntegerMap, stringIntegerMap2) -> {
                             Map<String, Integer> newMap = new HashMap<>(stringIntegerMap);
                             newMap.putAll(stringIntegerMap2);
