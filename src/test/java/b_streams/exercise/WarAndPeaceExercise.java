@@ -8,10 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -31,9 +28,8 @@ public class WarAndPeaceExercise {
         String result = pathStream.flatMap(path -> {
             try {
                 return Files.lines(path, Charset.forName("Windows-1251"));
-            } catch (IOException e) {
-                throw new RuntimeException();
-            }
+            } catch (IOException ignored) {            }
+            return null;
         })
                 .flatMap(s -> Arrays.stream(s.trim().replaceAll("[^\\p{L}]+", " ").split("\\s")))
                 .map(String::toLowerCase)
