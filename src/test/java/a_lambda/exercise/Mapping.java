@@ -31,8 +31,10 @@ public class Mapping {
         // [T] -> (T -> R) -> [R]
         // [T1, T2, T3] -> (T -> R) -> [R1, R2, R3]
         public <R> MapHelper<R> map(Function<T, R> f) {
-            // TODO
-            throw new UnsupportedOperationException();
+            List<R> resultList = new ArrayList<>();
+            list.forEach(t -> resultList.add(f.apply(t)));
+
+            return new MapHelper<>(resultList);
         }
 
         // [T] -> (T -> [R]) -> [R]
@@ -75,12 +77,15 @@ public class Mapping {
 
         final List<Employee> mappedEmployees =
                 new MapHelper<>(employees)
+                        .map(employee -> employee.withPerson(employee.getPerson().withFirstName("John")))
+                        .map(employee -> employee.withJobHistory(addOneYear(employee.getJobHistory())))
+                        .map(employee -> employee.withJobHistory(qaToUpperCase(employee.getJobHistory())))
+                        .getList();
                 /*
                 .map(TODO) // change name to John .map(e -> e.withPerson(e.getPerson().withFirstName("John")))
                 .map(TODO) // add 1 year to experience duration .map(e -> e.withJobHistory(addOneYear(e.getJobHistory())))
                 .map(TODO) // replace qa with QA
                 * */
-                .getList();
 
         final List<Employee> expectedResult =
                 Arrays.asList(
@@ -107,10 +112,33 @@ public class Mapping {
         assertEquals(mappedEmployees, expectedResult);
     }
 
+    private static List<JobHistoryEntry> qaToUpperCase(List<JobHistoryEntry> jobHistory) {
+
+        return new MapHelper<>(jobHistory)
+                .map(jobHistoryEntry -> {
+                    String position = jobHistoryEntry.getPosition();
+                    return (position.equals("qa")) ? jobHistoryEntry.withPosition(position.toUpperCase()) : jobHistoryEntry;
+                })
+                .getList();
+    }
+
+    private static List<JobHistoryEntry> addOneYear(List<JobHistoryEntry> jobHistory) {
+
+        return new MapHelper<>(jobHistory)
+                .map(jobHistoryEntry -> jobHistoryEntry.withDuration(jobHistoryEntry.getDuration() + 1))
+                .getList();
+    }
+
 
     private static class LazyMapHelper<T, R> {
 
+        private final List<T> list;
+        private final Function<T, R> function;
+
         public LazyMapHelper(List<T> list, Function<T, R> function) {
+
+            this.list = list;
+            this.function = function;
         }
 
         public static <T> LazyMapHelper<T, T> from(List<T> list) {
@@ -118,13 +146,17 @@ public class Mapping {
         }
 
         public List<R> force() {
-            // TODO
-            throw new UnsupportedOperationException();
+
+            List<R> result = new ArrayList<>();
+
+            list.forEach(a -> result.add(function.apply(a)));
+
+            return result;
         }
 
         public <R2> LazyMapHelper<T, R2> map(Function<R, R2> f) {
-            // TODO
-            throw new UnsupportedOperationException();
+
+            return new LazyMapHelper<>(list, function.andThen(f));
         }
 
     }
@@ -155,12 +187,15 @@ public class Mapping {
 
         final List<Employee> mappedEmployees =
                 LazyMapHelper.from(employees)
-                /*
-                .map(TODO) // change name to John
-                .map(TODO) // add 1 year to experience duration
-                .map(TODO) // replace qa with QA
-                * */
-                .force();
+                        .map(employee -> employee.withPerson(employee.getPerson().withFirstName("John")))
+                        .map(employee -> employee.withJobHistory(addOneYear(employee.getJobHistory())))
+                        .map(employee -> employee.withJobHistory(qaToUpperCase(employee.getJobHistory())))
+                        .force();
+                        /*
+                        .map(TODO) // change name to John
+                        .map(TODO) // add 1 year to experience duration
+                        .map(TODO) // replace qa with QA
+                        * */
 
         final List<Employee> expectedResult =
                 Arrays.asList(
