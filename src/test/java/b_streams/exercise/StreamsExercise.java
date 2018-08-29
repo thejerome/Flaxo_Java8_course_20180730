@@ -4,18 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
-
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.junit.jupiter.api.Test;
-
 import b_streams.data.Employee;
 import b_streams.data.JobHistoryEntry;
 import b_streams.data.Person;
-import sun.text.resources.et.CollationData_et;
 
 public class StreamsExercise {
 
@@ -89,7 +83,7 @@ public class StreamsExercise {
                 .flatMap(e -> e.getJobHistory().stream()
                         .map(j -> new PersonEmployer(e.getPerson(), j.getEmployer())))
                 .collect(Collectors.groupingBy(PersonEmployer::getEmployer,
-                        Collectors.mapping(PersonEmployer::getPerson, Collectors.toList())));; // TODO
+                        Collectors.mapping(PersonEmployer::getPerson, Collectors.toList()))); // TODO
 
         assertEquals(11, index.get("epam").size());
     }
