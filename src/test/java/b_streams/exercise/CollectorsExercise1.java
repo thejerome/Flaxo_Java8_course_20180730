@@ -3,10 +3,7 @@ package b_streams.exercise;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +18,15 @@ public class CollectorsExercise1 {
     @Test
     public void testPersonToHisLongestJobDuration() {
 
-        Map<Person, Integer> collected = null;//getEmployees()
+        Map<Person, Integer> collected = getEmployees().parallelStream()
+                .flatMap(employee -> employee.getJobHistory().stream()
+                        .map(jobHistoryEntry -> new PersonEmployerPair(employee.getPerson(), jobHistoryEntry.getEmployer(), jobHistoryEntry.getDuration())))
+                .sorted(Comparator.comparingInt(PersonEmployerPair::getDuration))
+                .collect(
+                        HashMap::new,
+                        (map, pair) -> map.put(pair.getEmployee(), pair.getDuration()),
+                        HashMap::putAll
+                );
 
         Map<Person, Integer> expected = ImmutableMap.<Person, Integer>builder()
                 .put(new Person("John", "Galt", 20), 3)
@@ -43,7 +48,14 @@ public class CollectorsExercise1 {
     @Test
     public void testPersonToHisTotalJobDuration() {
 
-        Map<Person, Integer> collected = null;
+        Map<Person, Integer> collected = getEmployees().stream()
+                .flatMap(employee -> employee.getJobHistory().stream()
+                        .map(jobHistoryEntry -> new PersonEmployerPair(employee.getPerson(), jobHistoryEntry.getEmployer(), jobHistoryEntry.getDuration())))
+                .collect(
+                        HashMap::new,
+                        (map, pair) -> map.put(pair.getEmployee(), map.getOrDefault(pair.getEmployee(), 0) + pair.getDuration()),
+                        Map::putAll
+                );
 
 
         Map<Person, Integer> expected = ImmutableMap.<Person, Integer>builder()
@@ -65,10 +77,21 @@ public class CollectorsExercise1 {
     }
 
     @Test
-    public void testTotalJobDurationPerNameAndSurname(){
+    public void testTotalJobDurationPerNameAndSurname() {
 
         //Implement custom Collector
-        Map<String, Integer> collected = null;
+        Map<String, Integer> collected = getEmployees().stream()
+                .flatMap(employee -> employee.getJobHistory().stream()
+                        .map(jobHistoryEntry -> new PersonEmployerPair(employee.getPerson(), jobHistoryEntry.getEmployer(), jobHistoryEntry.getDuration())))
+                .collect(
+                        HashMap::new,
+                        (map, pair) ->
+                        {
+                            map.put(pair.getEmployee().getFirstName(), map.getOrDefault(pair.getEmployee().getFirstName(), 0) + pair.getDuration());
+                            map.put(pair.getEmployee().getLastName(), map.getOrDefault(pair.getEmployee().getLastName(), 0) + pair.getDuration());
+                        },
+                        HashMap::putAll
+                );
 
         Map<String, Integer> expected = ImmutableMap.<String, Integer>builder()
                 .put("John", 5 + 8 + 6 + 5 + 8 + 6 + 4 + 8 + 6 + 4 + 11 + 6 - 8 - 6)
@@ -156,6 +179,43 @@ public class CollectorsExercise1 {
                                 new JobHistoryEntry(6, "QA", "epam")
                         ))
         );
+    }
+
+
+    class PersonEmployerPair {
+        private Person employee;
+        private String employer;
+        private int duration;
+
+        public int getDuration() {
+            return duration;
+        }
+
+        public void setDuration(int duration) {
+            this.duration = duration;
+        }
+
+        public Person getEmployee() {
+            return employee;
+        }
+
+        public void setEmployee(Person employee) {
+            this.employee = employee;
+        }
+
+        public String getEmployer() {
+            return employer;
+        }
+
+        public void setEmployer(String employer) {
+            this.employer = employer;
+        }
+
+        public PersonEmployerPair(Person person, String employer, int duration) {
+            this.employee = person;
+            this.employer = employer;
+            this.duration = duration;
+        }
     }
 
 }
