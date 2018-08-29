@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
@@ -41,8 +42,10 @@ public class StreamsExercise1 {
             }
         }
 
-        List<Employee> epamEmployees = null;
-        // TODO all persons with experience in epam
+        List<Employee> epamEmployees = allEmployee
+                .stream()
+                .filter(employee -> employee.getJobHistory().stream().anyMatch(jobHistoryEntry -> "epam".equals(jobHistoryEntry.getEmployer())))
+                .collect(Collectors.toList());
 
 
 
@@ -62,8 +65,11 @@ public class StreamsExercise1 {
             }
         }
 
-        List<Employee> epamEmployees = null;
-        // TODO all persons with first experience in epam
+        List<Employee> epamEmployees = allEmployee
+                .stream()
+                .filter(employee -> "epam".equals(employee.getJobHistory().get(0).getEmployer()))
+                .collect(Collectors.toList());
+
 
         assertNotNull(epamEmployees);
         assertFalse(epamEmployees.isEmpty());
@@ -86,7 +92,16 @@ public class StreamsExercise1 {
             }
         }
 
-         Integer result = null;//TODO sum of all durations in epam job histories
+         Integer result = employees
+                 .stream()
+                 .flatMap(employee -> employee.getJobHistory().stream())
+                 .filter(jhe -> "epam".equals(jhe.getEmployer()))
+                 .mapToInt(JobHistoryEntry::getDuration)
+                 .sum();
+
+
+
+        //TODO sum of all durations in epam job histories
          assertEquals(expected, result);
     }
 
