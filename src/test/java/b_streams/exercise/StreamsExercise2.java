@@ -1,12 +1,17 @@
 package b_streams.exercise;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.mapping;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -24,13 +29,48 @@ public class StreamsExercise2 {
     // https://youtu.be/i0Jr2l3jrDA Сергей Куксенко — Stream API, часть 2
 
     // TODO class PersonEmployerPair
+    private static class PersonEmployerPair{
+      private Person person;
+      private String employer;
+      private int duration;
+
+      public PersonEmployerPair(Person person, String employer) {
+        this.person = person;
+        this.employer = employer;
+        this.duration = 0;
+      }
+
+      public PersonEmployerPair(Person person, String employer, int duration) {
+        this.person = person;
+        this.employer = employer;
+        this.duration = duration;
+      }
+
+      public int getDuration() {
+        return duration;
+      }
+
+      public Person getPerson() {
+        return person;
+      }
+
+      public String getEmployer() {
+        return employer;
+      }
+    }
 
     @Test
     public void employersStuffLists() {
         final List<Employee> employees = getEmployees();
 
-        Map<String, List<Person>> employersStuffLists = null;
-        // TODO map employer vs persons with job history related to it
+      // TODO map employer vs persons with job history related to it
+      Map<String, List<Person>> employersStuffLists = employees.stream()
+          .flatMap(employee -> employee.getJobHistory().stream()
+              .map(jobHistoryEntry ->
+                  new PersonEmployerPair(employee.getPerson(),
+                  jobHistoryEntry.getEmployer())))
+          .collect(groupingBy(PersonEmployerPair::getEmployer,
+              mapping(PersonEmployerPair::getPerson, Collectors.toList())));
 
         assertEquals(getExpectedEmployersStuffLists(), employersStuffLists);
     }
@@ -39,8 +79,16 @@ public class StreamsExercise2 {
     public void indexByFirstEmployer() {
         final List<Employee> employees = getEmployees();
 
-        Map<String, List<Person>> employeesIndex = null;
-        // TODO map employer vs persons with first job history related to it
+      // TODO map employer vs persons with first job history related to it
+      Map<String, List<Person>> employeesIndex = employees.stream()
+            .flatMap(employee -> employee.getJobHistory().stream()
+                .limit(1)
+                .map(jobHistoryEntry ->
+                    new PersonEmployerPair(employee.getPerson(),
+                    jobHistoryEntry.getEmployer()))
+            )
+            .collect(groupingBy(PersonEmployerPair::getEmployer,
+                mapping(PersonEmployerPair::getPerson, Collectors.toList())));
 
         assertEquals(getExpectedEmployeesIndexByFirstEmployer(), employeesIndex);
 
@@ -48,8 +96,17 @@ public class StreamsExercise2 {
 
     @Test
     public void greatestExperiencePerEmployer() {
-        Map<String, Person> employeesIndex = null;
-        // TODO map employer vs person with greatest duration in it
+      // TODO map employer vs person with greatest duration in it
+      Map<String, Person> employeesIndex = getEmployees().stream()
+          .flatMap(employee -> employee.getJobHistory().stream()
+              .map(jobHistoryEntry ->
+                  new PersonEmployerPair(employee.getPerson(), jobHistoryEntry.getEmployer(), jobHistoryEntry.getDuration())))
+          .sorted(Comparator.comparingInt(PersonEmployerPair::getDuration))
+          .collect(
+              HashMap::new,
+              (map, pair) -> map.put(pair.employer, pair.person),
+              HashMap::putAll
+          );
 
         assertEquals(new Person("John", "White", 28), employeesIndex.get("epam"));
     }
