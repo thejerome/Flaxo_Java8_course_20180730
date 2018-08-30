@@ -74,13 +74,15 @@ public class CollectorsExercise1 {
 
         //Implement custom Collector
         Map<String, Integer> collected = getEmployees().stream()
-                .collect(HashMap::new, (hashMap, employee) -> employee.getJobHistory().stream().mapToInt(JobHistoryEntry::getDuration)
+                .collect(HashMap::new, (hashMap, employee) -> employee.getJobHistory().stream()
+                        .mapToInt(JobHistoryEntry::getDuration)
                         .forEach(duration -> {
-                            hashMap.computeIfPresent(employee.getPerson().getFirstName(),
-                                    (key, value) -> value + duration);
-                            hashMap.computeIfPresent(employee.getPerson().getLastName(),
-                                    (key, value) -> value + duration);
+                            hashMap.compute(employee.getPerson().getFirstName(),
+                                    (key, value) -> value != null ? value + duration : duration);
+                            hashMap.compute(employee.getPerson().getLastName(),
+                                    (key, value) -> value != null ? value + duration : duration);
                         }), HashMap::putAll);
+
 
         Map<String, Integer> expected = ImmutableMap.<String, Integer>builder()
                 .put("John", 5 + 8 + 6 + 5 + 8 + 6 + 4 + 8 + 6 + 4 + 11 + 6 - 8 - 6)
