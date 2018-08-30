@@ -215,7 +215,7 @@ public class StreamsExercise {
             .flatMap(personPositionIndex -> personPositionIndex.getDurationByPositionIndex().entrySet().stream()
                 .map(entry -> new PersonPositionDuration(personPositionIndex.getPerson(),
                     entry.getKey(),  entry.getValue())))
-            .collect(Collectors.toList());
+            .collect(toList());
         // TODO
 
 
