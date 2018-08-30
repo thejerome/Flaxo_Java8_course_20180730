@@ -95,7 +95,7 @@ public class StreamsExercise {
             .flatMap(employee -> employee.getJobHistory().stream()
                 .map(entry -> new PersonEmployer(employee.getPerson(), entry.getEmployer())))
             .collect(Collectors.groupingBy(PersonEmployer::getEmployer,
-                Collectors.mapping(PersonEmployer::getPerson, Collectors.toList()))); // TODO
+                Collectors.mapping(PersonEmployer::getPerson, toList()))); // TODO
 
         assertEquals(11, index.get("epam").size());
     }
@@ -176,7 +176,7 @@ public class StreamsExercise {
 
         final List<PersonPositionIndex> personIndexes = employees.stream()
             .map(StreamsExercise::getPersonPositionIndex)
-            .collect(Collectors.toList());
+            .collect(toList());
         // TODO use getPersonPositionIndex
 
         assertEquals(1, personIndexes.get(3).getDurationByPositionIndex().size());
@@ -253,7 +253,7 @@ public class StreamsExercise {
             .collect(Collectors.groupingBy(PersonPositionDuration::getPosition,
                 Collectors.collectingAndThen(
                     Collectors.maxBy(Comparator.comparingInt(p -> p.duration)),
-                    p -> p.get().getPerson())));; // TODO
+                    p -> p.get().getPerson()))); // TODO
 
 
         assertEquals(new Person("John", "White", 22), coolestPersonByPosition.get("QA"));
