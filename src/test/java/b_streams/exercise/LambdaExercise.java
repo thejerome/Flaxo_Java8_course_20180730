@@ -13,7 +13,7 @@ import b_streams.data.Person;
 public class LambdaExercise {
 
     private static boolean test(String s) {
-        return s.equals("John");
+        return "John".equals(s);
     }
 
     @Test

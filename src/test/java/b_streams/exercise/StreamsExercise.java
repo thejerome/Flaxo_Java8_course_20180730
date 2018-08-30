@@ -3,7 +3,6 @@ package b_streams.exercise;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
