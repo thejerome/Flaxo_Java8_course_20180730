@@ -3,15 +3,13 @@ package b_streams.exercise;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.*;
+import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.junit.jupiter.api.Test;
 
@@ -30,9 +28,7 @@ public class StreamsExercise {
                 .flatMap(e -> e.getJobHistory().stream())
                 .collect(Collectors.toList());
                  // TODO
-        final List<JobHistoryEntry> jobHistoryEntries = employees.stream()
-                .flatMap(employee -> employee.getJobHistory().stream())
-                .collect(Collectors.toList()); // TODO
+
 
         assertEquals(22, jobHistoryEntries.size());
     }
@@ -47,12 +43,6 @@ public class StreamsExercise {
                 .flatMap(e -> e.getJobHistory().stream())
                 .mapToInt(JobHistoryEntry::getDuration)
                 .sum();
-
-                // TODO
-        final int sumDurations = employees.stream()
-                .flatMap(employee -> employee.getJobHistory().stream())
-                .mapToInt(JobHistoryEntry::getDuration)
-                .sum(); // TODO
 
         assertEquals(72, sumDurations);
     }
@@ -237,8 +227,6 @@ public class StreamsExercise {
                 .collect(Collectors.toList())
                         ;
     // TODO
-        final List<PersonPositionDuration> personPositionDurations = null; // TODO
-
 
         assertEquals(17, personPositionDurations.size());
     }
@@ -249,22 +237,10 @@ public class StreamsExercise {
         final List<Employee> employees = getEmployees();
 
         final Map<String, PersonPositionDuration> coolestPersonByPosition = employees.stream()
-                .flatMap(e -> e.getJobHistory()
-                        .stream()
-                        .collect(Collectors.groupingBy(JobHistoryEntry::getPosition))
-                        .entrySet()
-                        .stream()
-                        .map(sljhe -> new PersonPositionDuration(
-                                e.getPerson(),
-                                sljhe.getKey(),
-                                sljhe.getValue().stream()
-                                        .mapToInt(JobHistoryEntry::getDuration)
-                                        .sum())))
-                .collect(Collectors.toList())
-                .stream()
-                .collect(Collectors.groupingBy(PersonPositionDuration::getPosition, Collectors.maxBy(Comparator.comparing(PersonPositionDuration::getDuration))));
+                .flatMap(e -> e.getJobHistory().stream().map(jhe -> new PersonPositionDuration(e.getPerson(), jhe.getPosition(), jhe.getDuration())))
+                .collect(Collectors.toMap(PersonPositionDuration::getPosition, Function.identity(), BinaryOperator.maxBy(Comparator.comparing(PersonPositionDuration::getDuration))));
 
-                ;
+
 
 
 
@@ -276,7 +252,12 @@ public class StreamsExercise {
         // Get person with max duration on given position
         final List<Employee> employees = getEmployees();
 
-        final Map<String, Person> coolestPersonByPosition = null; // TODO
+        final Map<String, Person> coolestPersonByPosition = employees.stream()
+                .flatMap(e -> e.getJobHistory().stream().map(jhe -> new PersonPositionDuration(e.getPerson(), jhe.getPosition(), jhe.getDuration())))
+                .collect(Collectors.groupingBy(PersonPositionDuration::getPosition,
+                        Collectors.collectingAndThen(
+                                Collectors.maxBy(Comparator.comparing(PersonPositionDuration::getDuration)),
+                                o -> o.get().getPerson()))); // TODO
 
 
         assertEquals(new Person("John", "White", 22), coolestPersonByPosition.get("QA"));
