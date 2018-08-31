@@ -173,7 +173,11 @@ public class StreamsExercise {
                 e.getPerson(),
                 e.getJobHistory()
                         .stream()
-                        .collect(Collectors.toMap(JobHistoryEntry::getEmployer, JobHistoryEntry::getDuration))
+                        .collect(Collectors.toMap(
+                                JobHistoryEntry::getPosition,
+                                JobHistoryEntry::getDuration,
+                                Integer::sum
+                        ))
         );
     }
 
@@ -219,14 +223,13 @@ public class StreamsExercise {
 
         final List<PersonPositionDuration> personPositionDurations =  employees
                 .stream()
-                .flatMap(e -> e.getJobHistory()
-                    .stream()
-                    .map(j -> new PersonPositionDuration(e.getPerson(), j.getPosition(), j.getDuration()))
-                    .collect(Collectors.toList())
-                    .stream()
-                )
-                .collect(Collectors.toList()); // TODO
-                //merge same position for each person
+                .map(StreamsExercise::getPersonPositionIndex)
+                .flatMap(p -> p
+                        .getDurationByPositionIndex()
+                        .entrySet()
+                        .stream()
+                        .map(e -> new PersonPositionDuration(p.getPerson(), e.getKey(), e.getValue())))
+                .collect(Collectors.toList());// TODO
 
         assertEquals(17, personPositionDurations.size());
     }
