@@ -1,6 +1,5 @@
 package c_spliterators.exercise;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Spliterator;
 import java.util.function.BiFunction;
@@ -9,8 +8,6 @@ import java.util.function.Consumer;
 public class ListZipSpliterator<L, R, T> implements Spliterator<T> {
     private final List<L> list1;
     private final List<R> list2;
-    private final Iterator<L> list1Iterator;
-    private final Iterator<R> list2Iterator;
     private final BiFunction<L, R, T> combiner;
     private int startInclusive;
     private final int endExclusive;
@@ -24,8 +21,6 @@ public class ListZipSpliterator<L, R, T> implements Spliterator<T> {
                                int startInclusive) {
         this.list1 = list1;
         this.list2 = list2;
-        this.list1Iterator = list1.iterator();
-        this.list2Iterator = list2.iterator();
         this.combiner = combiner;
         this.startInclusive = startInclusive;
         this.endExclusive = list1.size() > list2.size() ? list2.size() : list1.size();
