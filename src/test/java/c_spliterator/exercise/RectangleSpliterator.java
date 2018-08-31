@@ -94,6 +94,7 @@ public class RectangleSpliterator extends Spliterators.AbstractIntSpliterator {
             for (int j = startInc[1] + curPos; j < endExc[1] ; j++) {
                 action.accept(array[i][j]);
             }
+            curPos =0;
         }
         curPos = -1;
     }
