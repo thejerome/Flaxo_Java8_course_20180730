@@ -61,8 +61,13 @@ public class Generator {
     }
 
     public static List<Employee> generateEmployeeList() {
+        int maxLength = 10;
+        final int length = ThreadLocalRandom.current().nextInt(maxLength) + 1;
+        return Stream.generate(Generator::generateEmployee)
+                .limit(length)
+                .collect(toList());
         // TODO
-        throw new UnsupportedOperationException();
+      // throw new UnsupportedOperationException();
     }
 
     /**
