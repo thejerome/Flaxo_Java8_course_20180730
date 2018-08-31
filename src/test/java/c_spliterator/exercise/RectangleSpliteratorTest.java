@@ -38,7 +38,8 @@ public class RectangleSpliteratorTest {
 
         split.tryAdvance((IntConsumer) i -> {});
         assertEquals(12499, split.estimateSize());
-        assertEquals(12499, StreamSupport.intStream(split, true).count());
+        long count = StreamSupport.intStream(split, true).count();
+        assertEquals(12499, count);
     }
 
     @Test
