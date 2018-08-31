@@ -29,7 +29,7 @@ public class WarAndPeaceExercise {
             try {
                 return Files.lines(path, Charset.forName("windows-1251"));
             } catch (IOException e) {
-                throw new RuntimeException();
+                throw new RuntimeException(e);
             }
         })
                 .flatMap(s -> Arrays.stream(s.trim().replaceAll("[^\\p{L}]+", " ").split("\\s")))
