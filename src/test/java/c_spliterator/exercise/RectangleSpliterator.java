@@ -40,20 +40,20 @@ public class RectangleSpliterator extends Spliterators.AbstractIntSpliterator {
         // TODO
         final int firstDimlength = firstDimEndExclusive - firstDimStartInclusive;
         final int secondDimlength = secondDimEndExclusive - secondDimStartInclusive;
+
         if (firstDimlength < 2 && secondDimlength < 2) {
             return null;
         }
+
         RectangleSpliterator rectangleSpliterator;
 
         if (firstDimEndExclusive > secondDimEndExclusive) {
             int firstMid = firstDimStartInclusive + firstDimlength / 2;
-            int secondMid = secondDimEndExclusive;
-            rectangleSpliterator = new RectangleSpliterator(array, firstDimStartInclusive, firstMid, secondDimStartInclusive, secondMid, currentPosition);
+            rectangleSpliterator = new RectangleSpliterator(array, firstDimStartInclusive, firstMid, secondDimStartInclusive, secondDimEndExclusive, currentPosition);
             firstDimStartInclusive = firstMid;
         } else {
-            int firstMid = firstDimEndExclusive;
             int secondMid = secondDimStartInclusive + secondDimlength / 2;
-            rectangleSpliterator = new RectangleSpliterator(array, firstDimStartInclusive, firstMid, secondDimStartInclusive, secondMid, currentPosition);
+            rectangleSpliterator = new RectangleSpliterator(array, firstDimStartInclusive, firstDimEndExclusive, secondDimStartInclusive, secondMid, currentPosition);
             secondDimStartInclusive = secondMid;
         }
         return rectangleSpliterator;
