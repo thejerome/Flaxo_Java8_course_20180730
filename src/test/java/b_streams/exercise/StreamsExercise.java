@@ -3,7 +3,6 @@ package b_streams.exercise;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
