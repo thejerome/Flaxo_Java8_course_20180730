@@ -252,7 +252,7 @@ public class StreamsExercise {
                                                                            entry.getKey(),
                                                                            entry.getValue())))
                      .collect(Collectors.toMap(PersonPositionDuration::getPosition,
-                         Function.identity(), BinaryOperator.maxBy(Comparator.comparingInt(p -> p.duration))));;// TODO
+                         Function.identity(), BinaryOperator.maxBy(Comparator.comparingInt(p -> p.duration))));// TODO
 
 
         assertEquals(new Person("John", "White", 22), coolestPersonByPosition.get("QA").getPerson());
