@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
 import b_streams.data.Employee;
@@ -43,6 +44,9 @@ public class StreamsExercise1 {
 
         List<Employee> epamEmployees = null;
         // TODO all persons with experience in epam
+        epamEmployees = allEmployee.stream()
+            .filter(a -> a.getJobHistory().stream().anyMatch(b -> b.toString().contains("epam")))
+            .collect(Collectors.toList());
 
 
 
@@ -64,6 +68,9 @@ public class StreamsExercise1 {
 
         List<Employee> epamEmployees = null;
         // TODO all persons with first experience in epam
+      epamEmployees = allEmployee.stream()
+          .filter(a -> a.getJobHistory().get(0).toString().contains("epam"))
+          .collect(Collectors.toList());
 
         assertNotNull(epamEmployees);
         assertFalse(epamEmployees.isEmpty());
@@ -86,7 +93,12 @@ public class StreamsExercise1 {
             }
         }
 
-         Integer result = null;//TODO sum of all durations in epam job histories
+      //TODO sum of all durations in epam job histories
+         Integer result = employees.stream()
+             .flatMap(employee -> employee.getJobHistory().stream())
+             .filter(j -> j.toString().contains("epam"))
+             .mapToInt(JobHistoryEntry::getDuration)
+             .sum();
          assertEquals(expected, result);
     }
 
