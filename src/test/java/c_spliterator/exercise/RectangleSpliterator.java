@@ -51,12 +51,15 @@ public class RectangleSpliterator extends Spliterators.AbstractIntSpliterator {
             int firstMid = firstDimStartInclusive + firstDimlength / 2;
             rectangleSpliterator = new RectangleSpliterator(array, firstDimStartInclusive, firstMid, secondDimStartInclusive, secondDimEndExclusive, currentPosition);
             firstDimStartInclusive = firstMid;
+            currentPosition = secondDimStartInclusive;
         } else {
             int secondMid = secondDimStartInclusive + secondDimlength / 2;
             rectangleSpliterator = new RectangleSpliterator(array, firstDimStartInclusive, firstDimEndExclusive, secondDimStartInclusive, secondMid, currentPosition);
             secondDimStartInclusive = secondMid;
+            currentPosition = secondDimStartInclusive;
         }
         return rectangleSpliterator;
+
     }
 
     @Override
@@ -72,8 +75,7 @@ public class RectangleSpliterator extends Spliterators.AbstractIntSpliterator {
             return false;
         }
         final int value = array[firstDimStartInclusive][secondDimStartInclusive];
-        secondDimStartInclusive += 1;
-        ++currentPosition;
+        currentPosition++;
         action.accept(value);
         return true;
     }
@@ -81,11 +83,13 @@ public class RectangleSpliterator extends Spliterators.AbstractIntSpliterator {
     @Override
     public void forEachRemaining(IntConsumer action) {
         for (int i = firstDimStartInclusive; i < firstDimEndExclusive; i++) {
-            for (int j = secondDimStartInclusive; j < secondDimEndExclusive; j++) {
+            for (int j = secondDimStartInclusive + currentPosition; j < secondDimEndExclusive; j++) {
                 action.accept(array[i][j]);
             }
+            currentPosition = 0;
         }
         firstDimStartInclusive = firstDimEndExclusive;
         secondDimStartInclusive = secondDimEndExclusive;
+
     }
 }
