@@ -2,16 +2,17 @@ package c_spliterator.exercise;
 
 
 import java.util.Spliterators;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.IntConsumer;
 
 public class RectangleSpliterator extends Spliterators.AbstractIntSpliterator {
 
     private final int[][] array;
-    private  int startInclusiveRaw;
+    private volatile int startInclusiveRaw;
     private final int endExclusiveRaw;
-    private  int startInclusiveCol;
+    private volatile int startInclusiveCol;
     private final int endExclusiveCol;
-    private  int rawOffset;
+    private volatile int rawOffset;
 
     public RectangleSpliterator(int[][] array) {
         this(array, 0, array.length, 0, array[0].length);
@@ -34,7 +35,7 @@ public class RectangleSpliterator extends Spliterators.AbstractIntSpliterator {
     }
 
     @Override
-    public RectangleSpliterator trySplit() {
+    public synchronized RectangleSpliterator trySplit() {
         // TODO
         final int size = (endExclusiveRaw - startInclusiveRaw) * (endExclusiveCol - startInclusiveCol);
 
@@ -56,7 +57,7 @@ public class RectangleSpliterator extends Spliterators.AbstractIntSpliterator {
     }
 
     @Override
-    public long estimateSize() {
+    public synchronized long estimateSize() {
         if (startInclusiveRaw >= endExclusiveRaw) {
             return endExclusiveCol - startInclusiveCol;
         }
@@ -67,7 +68,7 @@ public class RectangleSpliterator extends Spliterators.AbstractIntSpliterator {
     }
 
     @Override
-    public boolean tryAdvance(IntConsumer action) {
+    public synchronized boolean tryAdvance(IntConsumer action) {
         // TODO
         if (startInclusiveRaw >= endExclusiveRaw) {
             return false;
