@@ -32,18 +32,53 @@ public class RectangleSpliterator extends Spliterators.AbstractIntSpliterator {
     @Override
     public RectangleSpliterator trySplit() {
         // TODO
-        throw new UnsupportedOperationException();
+        int raws = rowEndExclusive - rowStartInclusive;
+        int cols = columnEndExclusive - columnStartInclusive;
+        if (raws < 2 && cols < 2) {
+            return null;
+        }
+        final RectangleSpliterator currentResult;
+        int mid;
+        if (raws >= cols) {
+            mid = rowStartInclusive + raws / 2;
+            currentResult = new RectangleSpliterator(array, rowStartInclusive, mid, columnStartInclusive,
+                cursor, columnEndExclusive);
+            rowStartInclusive = mid;
+            cursor = columnStartInclusive;
+        } else {
+            mid = columnStartInclusive + cols / 2;
+            if (cursor >= mid) {
+                currentResult = new RectangleSpliterator(array, ++rowStartInclusive, rowEndExclusive,
+                    columnStartInclusive, columnStartInclusive, mid);
+            } else {
+                currentResult = new RectangleSpliterator(array, rowStartInclusive, rowEndExclusive, columnStartInclusive,
+                    cursor, mid);
+                cursor = mid;
+            }
+            columnStartInclusive = mid;
+        }
+        return currentResult;
     }
 
     @Override
     public long estimateSize() {
         //TODO
-        throw new UnsupportedOperationException();
+        return (rowEndExclusive - rowStartInclusive - 1) * columnEndExclusive + (columnEndExclusive - cursor);
     }
 
     @Override
     public boolean tryAdvance(IntConsumer action) {
         // TODO
-        throw new UnsupportedOperationException();
+        if (rowStartInclusive < rowEndExclusive) {
+            action.accept(array[rowStartInclusive][cursor]);
+            ++cursor;
+            if (cursor == rowEndExclusive) {
+                ++rowStartInclusive;
+                cursor = rowEndExclusive;
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 }
