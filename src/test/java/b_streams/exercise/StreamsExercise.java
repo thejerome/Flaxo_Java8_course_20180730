@@ -1,6 +1,5 @@
 package b_streams.exercise;
 
-import static java.util.stream.Collectors.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.*;
@@ -24,7 +23,7 @@ public class StreamsExercise {
         final List<JobHistoryEntry> jobHistoryEntries = employees
                 .stream()
                 .flatMap(e -> e.getJobHistory().stream())
-                .collect(toList()); // TODO
+                .collect(Collectors.toList()); // TODO
 
         assertEquals(22, jobHistoryEntries.size());
     }
@@ -80,9 +79,9 @@ public class StreamsExercise {
                 .collect(
                         Collectors
                                 .groupingBy(PersonEmployer::getEmployer,
-                                        mapping(p -> new PersonEmployer(
+                                        Collectors.mapping(p -> new PersonEmployer(
                                                 p.getPerson(), p.getEmployer()),
-                                                toList())));// TODO
+                                                Collectors.toList())));// TODO
 
         assertEquals(11, index.get("epam").size());
     }
@@ -98,7 +97,7 @@ public class StreamsExercise {
                         .map(p -> new PersonEmployer(e.getPerson(), p.getEmployer())))
                 .collect(Collectors
                         .groupingBy(PersonEmployer::getEmployer,
-                                mapping(PersonEmployer::getPerson, toList()))); // TODO
+                                Collectors.mapping(PersonEmployer::getPerson, Collectors.toList()))); // TODO
 
         assertEquals(11, index.get("epam").size());
     }
@@ -177,7 +176,7 @@ public class StreamsExercise {
 
         Map<String, Integer> durationByPositionIndex = e.getJobHistory()
                 .stream()
-                .collect(toMap(
+                .collect(Collectors.toMap(
                         JobHistoryEntry::getPosition,
                         JobHistoryEntry::getDuration,
                         Integer::sum));
@@ -233,7 +232,7 @@ public class StreamsExercise {
                         .stream()
                         .map(j -> new PersonPositionDuration(
                                 p.getPerson(), j.getKey(), j.getValue())))
-                .collect(toList()); // TODO
+                .collect(Collectors.toList()); // TODO
 
 
         assertEquals(17, personPositionDurations.size());
