@@ -6,6 +6,12 @@ import java.util.function.IntConsumer;
 
 public class RectangleSpliterator extends Spliterators.AbstractIntSpliterator {
 
+    private int RowStartInclusive;
+    private int RowEndExclusive;
+    private int ColumnStartInclusive;
+    private int ColumnEndExclusive;
+    private int cursor;
+
     public RectangleSpliterator(int[][] array) {
         //TODO
         super(0, 0);
