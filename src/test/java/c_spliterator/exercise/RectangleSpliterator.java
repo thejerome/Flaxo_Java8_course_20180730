@@ -1,92 +1,105 @@
 package c_spliterator.exercise;
 
-
+import java.util.Spliterator;
 import java.util.Spliterators;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.IntConsumer;
 
 public class RectangleSpliterator extends Spliterators.AbstractIntSpliterator {
 
     private final int[][] array;
-    private volatile int startInclusiveRaw;
-    private final int endExclusiveRaw;
-    private volatile int startInclusiveCol;
-    private final int endExclusiveCol;
-    private volatile int rawOffset;
+
+    private int startInclusiveRaw;
+    private int endExclusiveRaw;
+    private int startInclusiveCol;
+    private int currentCol;
+    private int endExclusiveCol;
 
     public RectangleSpliterator(int[][] array) {
-        this(array, 0, array.length, 0, array[0].length);
-        //super(0, 0);
+        //TODO
+        this(array, 0, array.length, 0, 0, array[0].length);
     }
 
-    private RectangleSpliterator(int[][] array, int startInclusiveRaw, int endExclusiveRaw, int startInclusiveCol, int endExclusiveCol) {
+    private RectangleSpliterator(int[][] array, int startInclusiveRaw, int endExclusiveRaw, int startInclusiveCol,
+                                 int currentCol, int endExclusiveCol) {
+
         super((endExclusiveRaw - startInclusiveRaw) * (endExclusiveCol - startInclusiveCol),
-                IMMUTABLE
-                        | ORDERED
-                        | SIZED
-                        | SUBSIZED
-                        | NONNULL
-                        | CONCURRENT);
+                Spliterator.IMMUTABLE
+                        | Spliterator.ORDERED
+                        | Spliterator.SIZED
+                        | Spliterator.SUBSIZED
+                        | Spliterator.NONNULL);
+
         this.array = array;
         this.startInclusiveRaw = startInclusiveRaw;
         this.endExclusiveRaw = endExclusiveRaw;
         this.startInclusiveCol = startInclusiveCol;
+        this.currentCol = currentCol;
         this.endExclusiveCol = endExclusiveCol;
     }
 
     @Override
-    public synchronized RectangleSpliterator trySplit() {
+    public RectangleSpliterator trySplit() {
+
         // TODO
-        final int size = (endExclusiveRaw - startInclusiveRaw) * (endExclusiveCol - startInclusiveCol);
+        int raws = endExclusiveRaw - startInclusiveRaw;
+        int cols = endExclusiveCol - startInclusiveCol;
 
-        if (size <= 1) return null;
+        if (raws < 2 && cols < 2) {
+            return null;
+        }
 
-        final int mid;
         final RectangleSpliterator currentResult;
-        if (startInclusiveRaw < endExclusiveRaw) {
-            mid = startInclusiveRaw + (endExclusiveRaw - startInclusiveRaw) / 2;
-            currentResult = new RectangleSpliterator(array, mid, endExclusiveRaw, startInclusiveCol, endExclusiveCol);
+        int mid;
+
+        if (raws >= cols) {
+
+            mid = startInclusiveRaw + raws / 2;
+            currentResult = new RectangleSpliterator(array, startInclusiveRaw, mid, startInclusiveCol,
+                    currentCol, endExclusiveCol);
+
             startInclusiveRaw = mid;
+            currentCol = startInclusiveCol;
         } else {
-            mid = startInclusiveCol + (endExclusiveCol - startInclusiveCol) / 2;
-            currentResult = new RectangleSpliterator(array, startInclusiveRaw, endExclusiveRaw, mid, endExclusiveCol);
+            mid = startInclusiveCol + cols / 2;
+
+            if (currentCol >= mid) {
+                currentResult = new RectangleSpliterator(array, ++startInclusiveRaw, endExclusiveRaw,
+                        startInclusiveCol, startInclusiveCol, mid);
+            } else {
+                currentResult = new RectangleSpliterator(array, startInclusiveRaw, endExclusiveRaw, startInclusiveCol,
+                        currentCol, mid);
+
+                currentCol = mid;
+            }
+
             startInclusiveCol = mid;
         }
+
         return currentResult;
-//        throw new UnsupportedOperationException();
     }
 
     @Override
-    public synchronized long estimateSize() {
-        if (startInclusiveRaw >= endExclusiveRaw) {
-            return endExclusiveCol - startInclusiveCol;
-        }
-
-        return (endExclusiveRaw - startInclusiveRaw) * endExclusiveCol - rawOffset;
-//        return (endExclusiveRaw - startInclusiveRaw) * (endExclusiveCol - startInclusiveCol);
-//        throw new UnsupportedOperationException();
+    public long estimateSize() {
+        //TODO
+        return (endExclusiveRaw - startInclusiveRaw - 1) * endExclusiveCol + (endExclusiveCol - currentCol);
     }
 
     @Override
-    public synchronized boolean tryAdvance(IntConsumer action) {
+    public boolean tryAdvance(IntConsumer action) {
+
         // TODO
-        if (startInclusiveRaw >= endExclusiveRaw) {
+        if (startInclusiveRaw < endExclusiveRaw) {
+            action.accept(array[startInclusiveRaw][currentCol]);
+
+            ++currentCol;
+            if (currentCol == endExclusiveCol) {
+                ++startInclusiveRaw;
+                currentCol = startInclusiveCol;
+            }
+
+            return true;
+        } else {
             return false;
         }
-
-        final int value = array[startInclusiveRaw][startInclusiveCol];
-
-        if (startInclusiveCol + 1 == endExclusiveCol) {
-            startInclusiveCol = 0;
-            rawOffset = 0;
-            startInclusiveRaw += 1;
-        } else {
-            startInclusiveCol += 1;
-            rawOffset++;
-        }
-
-        action.accept(value);
-        return true;
-//        throw new UnsupportedOperationException();
     }
 }
