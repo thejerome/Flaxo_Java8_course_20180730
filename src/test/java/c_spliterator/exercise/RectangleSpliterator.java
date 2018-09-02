@@ -5,75 +5,92 @@ import java.util.Spliterators;
 import java.util.function.IntConsumer;
 
 public class RectangleSpliterator extends Spliterators.AbstractIntSpliterator {
-
     private final int[][] array;
-    private int startInclusive;
-    private final int endExclusive;
 
-    private int rowLength;
-    private int clmnLength;
+    private int startInclusiveRow;
+    private final int endExclusiveRow;
+    private int startInclusiveClmn;
+    private final int endExclusiveClmn;
+
+    private int curIndClmn;
 
     public RectangleSpliterator(int[][] array) {
         //TODO
-        this(array, 0, array.length);
+        this(array, 0, array.length, 0, 0, array[0].length);
     }
 
-    public RectangleSpliterator(int[][] array, int startInclusive, int endExclusive) {
-        super(endExclusive - startInclusive, IMMUTABLE
+    public RectangleSpliterator(int[][] array, int startInclusiveRow, int endExclusiveRow, int startInclusiveClmn, int curIndClmn, int endExclusiveClmn) {
+        super((endExclusiveRow - startInclusiveRow) * (endExclusiveClmn - endExclusiveRow),
+                IMMUTABLE
                 | ORDERED
                 | SIZED
                 | SUBSIZED
                 | NONNULL);
 
         this.array = array;
-        this.startInclusive = startInclusive;
-        this.endExclusive = endExclusive;
-
-        rowLength = array.length;
-        clmnLength = array[0].length;
+        this.startInclusiveRow = startInclusiveRow;
+        this.endExclusiveRow = endExclusiveRow;
+        this.startInclusiveClmn = startInclusiveClmn;
+        this.curIndClmn = curIndClmn;
+        this.endExclusiveClmn = endExclusiveClmn;
     }
 
     @Override
     public RectangleSpliterator trySplit() {
         // TODO
-        final int maxLength = Math.max(rowLength, clmnLength);
+        RectangleSpliterator res;
+        int mid;
 
-        System.out.println("maxLength = " + maxLength);
+        int lengthRow = endExclusiveRow - startInclusiveRow;
+        int lengthClmn = endExclusiveClmn - startInclusiveClmn;
 
-        final int length = endExclusive - startInclusive;
-        if (length < 2) {
+        if (lengthRow < 2 && lengthClmn < 2) {
             return null;
         }
 
-        final int mid = startInclusive + length/2;
-        final RectangleSpliterator rectangleSpliterator = new RectangleSpliterator(array, startInclusive, mid);
-        startInclusive = mid;
+        if (lengthRow >= lengthClmn) {
+            mid = startInclusiveRow + lengthRow / 2;
 
+            res = new RectangleSpliterator(array, startInclusiveRow, mid, startInclusiveClmn, curIndClmn, endExclusiveClmn);
+            startInclusiveRow = mid;
+            curIndClmn = startInclusiveClmn;
+        } else {
+            mid = startInclusiveClmn + lengthClmn / 2;
 
-        return rectangleSpliterator;
+            if (mid > curIndClmn) {
+                res = new RectangleSpliterator(array, startInclusiveRow, endExclusiveRow, startInclusiveClmn, curIndClmn, mid);
+                curIndClmn = mid;
+            } else {
+                startInclusiveRow += 1;
+                res = new RectangleSpliterator(array, startInclusiveRow, endExclusiveRow, startInclusiveClmn, startInclusiveClmn, mid);
+            }
+
+            startInclusiveClmn = mid;
+        }
+
+        return res;
     }
 
     @Override
     public long estimateSize() {
         //TODO
-        return endExclusive - startInclusive;
+        return ((endExclusiveRow - startInclusiveRow) * endExclusiveClmn - curIndClmn);
     }
 
     @Override
     public boolean tryAdvance(IntConsumer action) {
         // TODO
-        if (startInclusive >= endExclusive) {
+        if (startInclusiveRow >= endExclusiveRow) {
             return false;
         }
 
-        System.out.println("startInclusive = " + startInclusive);
-
-        System.out.println("array.length = " + array.length);
-
-        final int value = array[startInclusive][startInclusive];
-
-        startInclusive += 1;
+        final int value = array[startInclusiveRow][curIndClmn];
         action.accept(value);
+
+        if (++curIndClmn == endExclusiveClmn) {
+            startInclusiveRow += 1;
+            curIndClmn = startInclusiveClmn;
+        }
 
         return true;
     }
