@@ -26,19 +26,40 @@ public class ListZipSpliterator<L, R, T> implements Spliterator<T> {
     @Override
     public boolean tryAdvance(Consumer<? super T> action) {
         //TODO
-        throw new UnsupportedOperationException();
+        if (current == list1.size() || current == list2.size()) {
+            return false;
+        }
+        L first = list1.get(current);
+        R second = list2.get(current);
+        T combined = combiner.apply(first, second);
+        action.accept(combined);
+        current++;
+        return true;
     }
 
     @Override
     public Spliterator<T> trySplit() {
         //TODO
-        throw new UnsupportedOperationException();
+        if (list1.size() < 2 && list2.size() < 2) {
+            return null;
+        }
+        ListZipSpliterator<L, R, T> zipSpliterator;
+        if (list1.size() > list2.size()) {
+            int mid = list1.size() / 2;
+            zipSpliterator = new ListZipSpliterator<>(list1.subList(0, mid), list2.subList(0, mid), combiner);
+            current = mid;
+        } else {
+            int mid = list2.size() / 2;
+            zipSpliterator = new ListZipSpliterator<>(list1.subList(0, mid), list2.subList(0, mid), combiner);
+            current = mid;
+        }
+        return zipSpliterator;
     }
 
     @Override
     public long estimateSize() {
         //TODO
-        throw new UnsupportedOperationException();
+        return Math.min (list1.size(), list2.size());
     }
 
     @Override
