@@ -6,31 +6,64 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 public class ListZipSpliterator<L, R, T> implements Spliterator<T> {
-    public ListZipSpliterator(List<L> list1, List<R> list2, BiFunction<L, R, T> combiner) {
 
+    private final List<L> list1;
+    private final List<R> list2;
+    private final BiFunction<L, R, T> combiner;
+    private int startIndex;
+    private int endIndex;
+
+    ListZipSpliterator(List<L> list1, List<R> list2, BiFunction<L, R, T> combiner) {
+
+        this.list1 = (list1.size() > list2.size()) ? list1.subList(0, list2.size()) : list1;
+        this.list2 = (list1.size() < list2.size()) ? list2.subList(0, list1.size()) : list2;
+        this.combiner = combiner;
+
+        this.startIndex = 0;
+        this.endIndex = this.list1.size();
+    }
+
+    private ListZipSpliterator(List<L> list1, List<R> list2, BiFunction<L, R, T> combiner,
+                                int start, int end){
+
+        this.list1 = list1;
+        this.list2 = list2;
+        this.combiner = combiner;
+        this.startIndex = start;
+        this.endIndex = end;
     }
 
     @Override
     public boolean tryAdvance(Consumer<? super T> action) {
-        //TODO
-        throw new UnsupportedOperationException();
+        if (startIndex < endIndex) {
+            action.accept(combiner.apply(list1.get(startIndex), list2.get(startIndex++)));
+            return true;
+        }
+        return false;
     }
 
     @Override
     public Spliterator<T> trySplit() {
-        //TODO
-        throw new UnsupportedOperationException();
+        long estimateSize = estimateSize();
+
+        if (estimateSize <= 1) {
+            return null;
+        }
+        int middleIndex = startIndex + (int)estimateSize / 2;
+        int newStartIndex = startIndex;
+        startIndex = middleIndex;
+
+        return new ListZipSpliterator<>(list1, list2, combiner, newStartIndex, middleIndex);
     }
 
     @Override
     public long estimateSize() {
-        //TODO
-        throw new UnsupportedOperationException();
+        return endIndex - startIndex;
     }
 
     @Override
     public int characteristics() {
-        //TODO
-        throw new UnsupportedOperationException();
+        return Spliterator.SUBSIZED | Spliterator.IMMUTABLE | Spliterator.NONNULL |
+            Spliterator.ORDERED | Spliterator.SIZED;
     }
 }
