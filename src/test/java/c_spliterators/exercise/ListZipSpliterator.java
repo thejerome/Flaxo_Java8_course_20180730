@@ -6,31 +6,70 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 public class ListZipSpliterator<L, R, T> implements Spliterator<T> {
-    public ListZipSpliterator(List<L> list1, List<R> list2, BiFunction<L, R, T> combiner) {
+    private final List<L> lList;
+    private final List<R> rList;
+    private final BiFunction<L, R, T> combiner;
 
+    private int startIn;
+    private final int endEx;
+
+    public ListZipSpliterator(List<L> lList, List<R> rList, BiFunction<L, R, T> combiner) {
+        int sizeLList = lList.size();
+        int sizeRList = rList.size();
+
+        if (sizeLList > sizeRList) {
+            lList = lList.subList(0, sizeRList);
+        } else {
+            rList = rList.subList(0, sizeLList);
+        }
+
+        this.lList = lList;
+        this.rList = rList;
+        this.combiner = combiner;
+
+        this.startIn = 0;
+        this.endEx = lList.size();
     }
 
     @Override
     public boolean tryAdvance(Consumer<? super T> action) {
         //TODO
-        throw new UnsupportedOperationException();
+
+        if (startIn < endEx) {
+            action.accept(combiner.apply(lList.get(startIn), rList.get(startIn)));
+            startIn += 1;
+            return true;
+        }
+
+
+        return false;
     }
 
     @Override
     public Spliterator<T> trySplit() {
         //TODO
-        throw new UnsupportedOperationException();
+        int length = endEx - startIn;
+
+        if (length < 2) {
+            return null;
+        }
+
+        int mid = startIn + length / 2;
+        final ListZipSpliterator res = new ListZipSpliterator(lList.subList(0, mid), rList.subList(0, mid), combiner);
+        startIn = mid;
+
+        return res;
     }
 
     @Override
     public long estimateSize() {
         //TODO
-        throw new UnsupportedOperationException();
+        return endEx - startIn;
     }
 
     @Override
     public int characteristics() {
         //TODO
-        throw new UnsupportedOperationException();
+        return 0;
     }
 }
