@@ -15,49 +15,53 @@ public class RectangleSpliterator extends Spliterators.AbstractIntSpliterator {
 
     public RectangleSpliterator(int[][] array) {
         //TODO
-        this(array, 0, array.length, 0, array[0].length, 0);
+        this(array, 0, array.length, 0, 0, array[0].length);
     }
-    private RectangleSpliterator(int[][] array, int rowStartInclusive, int rowEndExclusive,
-        int columnStartInclusive, int columnEndExclusive, int cursor) {
+    private RectangleSpliterator(int[][] array, int rowStartInclusive, int rowEndExclusive, int columnStartInclusive,
+        int cursor, int columnEndExclusive) {
         super((rowEndExclusive - rowStartInclusive) * (columnEndExclusive - columnStartInclusive),
-            IMMUTABLE | ORDERED | SIZED | SUBSIZED | NONNULL);
+            IMMUTABLE
+                | ORDERED
+                | SIZED
+                | SUBSIZED
+                | NONNULL);
         this.array = array;
         this.rowStartInclusive = rowStartInclusive;
         this.rowEndExclusive = rowEndExclusive;
         this.columnStartInclusive = columnStartInclusive;
-        this.columnEndExclusive = columnEndExclusive;
         this.cursor = cursor;
+        this.columnEndExclusive = columnEndExclusive;
     }
 
     @Override
     public RectangleSpliterator trySplit() {
         // TODO
-        int rows = rowEndExclusive - rowStartInclusive;
-        int cols = columnEndExclusive - columnStartInclusive;
-        if (rows < 2 && cols < 2) {
-            return null;
-        }
-        final RectangleSpliterator currentResult;
-        int mid;
-        if (rows >= cols) {
-            mid = rowStartInclusive + rows / 2;
-            currentResult = new RectangleSpliterator(array, rowStartInclusive, mid, columnStartInclusive,
-                cursor, columnEndExclusive);
-            rowStartInclusive = mid;
-            cursor = columnStartInclusive;
-        } else {
-            mid = columnStartInclusive + cols / 2;
-            if (cursor >= mid) {
-                currentResult = new RectangleSpliterator(array, ++rowStartInclusive, rowEndExclusive,
-                    columnStartInclusive, columnStartInclusive, mid);
-            } else {
-                currentResult = new RectangleSpliterator(array, rowStartInclusive, rowEndExclusive, columnStartInclusive,
-                    cursor, mid);
-                cursor = mid;
+            int rows = rowEndExclusive - rowStartInclusive;
+            int columns = columnEndExclusive - columnStartInclusive;
+            if (rows < 2 && columns < 2) {
+                return null;
             }
-            columnStartInclusive = mid;
-        }
-        return currentResult;
+            final RectangleSpliterator resultNow;
+            int mid;
+            if (rows >= columns) {
+                mid = rowStartInclusive + rows / 2;
+                resultNow = new RectangleSpliterator(array, rowStartInclusive, mid, columnStartInclusive,
+                    cursor, columnEndExclusive);
+                rowStartInclusive = mid;
+                cursor = columnStartInclusive;
+            } else {
+                mid = columnStartInclusive + columns / 2;
+                if (cursor >= mid) {
+                    resultNow = new RectangleSpliterator(array, ++rowStartInclusive, rowEndExclusive,
+                        columnStartInclusive, columnStartInclusive, mid);
+                } else {
+                    resultNow = new RectangleSpliterator(array, rowStartInclusive, rowEndExclusive, columnStartInclusive,
+                        cursor, mid);
+                    cursor = mid;
+                }
+                columnStartInclusive = mid;
+            }
+            return resultNow;
     }
 
     @Override
@@ -69,12 +73,16 @@ public class RectangleSpliterator extends Spliterators.AbstractIntSpliterator {
     @Override
     public boolean tryAdvance(IntConsumer action) {
         // TODO
-        if (rowStartInclusive >= rowEndExclusive || columnStartInclusive >= columnEndExclusive) {
+        if (rowStartInclusive < rowEndExclusive) {
+            action.accept(array[rowStartInclusive][cursor]);
+            cursor++;
+            if (cursor == columnEndExclusive) {
+                rowStartInclusive++;
+                cursor = columnStartInclusive;
+            }
+            return true;
+        } else {
             return false;
         }
-        final int value = array[rowStartInclusive][columnStartInclusive];
-        cursor++;
-        action.accept(value);
-        return true;
     }
 }
