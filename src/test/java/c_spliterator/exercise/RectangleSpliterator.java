@@ -32,15 +32,15 @@ public class RectangleSpliterator extends Spliterators.AbstractIntSpliterator {
     @Override
     public RectangleSpliterator trySplit() {
         // TODO
-        int raws = rowEndExclusive - rowStartInclusive;
+        int rows = rowEndExclusive - rowStartInclusive;
         int cols = columnEndExclusive - columnStartInclusive;
-        if (raws < 2 && cols < 2) {
+        if (rows < 2 && cols < 2) {
             return null;
         }
         final RectangleSpliterator currentResult;
         int mid;
-        if (raws >= cols) {
-            mid = rowStartInclusive + raws / 2;
+        if (rows >= cols) {
+            mid = rowStartInclusive + rows / 2;
             currentResult = new RectangleSpliterator(array, rowStartInclusive, mid, columnStartInclusive,
                 cursor, columnEndExclusive);
             rowStartInclusive = mid;
@@ -69,16 +69,12 @@ public class RectangleSpliterator extends Spliterators.AbstractIntSpliterator {
     @Override
     public boolean tryAdvance(IntConsumer action) {
         // TODO
-        if (rowStartInclusive < rowEndExclusive) {
-            action.accept(array[rowStartInclusive][cursor]);
-            ++cursor;
-            if (cursor == rowEndExclusive) {
-                ++rowStartInclusive;
-                cursor = rowEndExclusive;
-            }
-            return true;
-        } else {
+        if (rowStartInclusive >= rowEndExclusive || columnStartInclusive >= columnEndExclusive) {
             return false;
         }
+        final int value = array[rowStartInclusive][columnStartInclusive];
+        cursor++;
+        action.accept(value);
+        return true;
     }
 }
