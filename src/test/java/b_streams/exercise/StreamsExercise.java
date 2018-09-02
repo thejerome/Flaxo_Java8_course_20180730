@@ -8,9 +8,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.junit.jupiter.api.Test;
 
@@ -246,7 +244,7 @@ public class StreamsExercise {
                     jobHistoryEntry.getPosition(), jobHistoryEntry.getDuration())))
             .collect(Collectors.groupingBy(PersonPositionDuration::getPosition,
                 Collectors.collectingAndThen(Collectors.maxBy(Comparator.comparing(PersonPositionDuration::getDuration)),
-                    personPositionDuration -> personPositionDuration.orElseThrow(IllegalArgumentException::new).getPerson())));; // TODO
+                    personPositionDuration -> personPositionDuration.orElseThrow(IllegalArgumentException::new).getPerson()))); // TODO
 
 
         assertEquals(new Person("John", "White", 22), coolestPersonByPosition.get("QA"));
