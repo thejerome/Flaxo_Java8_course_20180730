@@ -16,7 +16,7 @@ public class RectangleSpliterator extends Spliterators.AbstractIntSpliterator {
     }
 
     private RectangleSpliterator(int[][] array, int fromI, int fromJ, int toI, int toJ, int originI, int originJ) {
-        super(0, 0);
+        super((toI - originI - 1) * (toJ - fromJ) + (toJ - originJ), ORDERED | SIZED | SUBSIZED);
         this.array = array;
         this.fromI = fromI;
         this.fromJ = fromJ;
