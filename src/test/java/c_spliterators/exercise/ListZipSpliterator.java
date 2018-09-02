@@ -59,6 +59,6 @@ public class ListZipSpliterator<L, R, T> implements Spliterator<T> {
     @Override
     public int characteristics() {
         //TODO
-        return IMMUTABLE | SIZED | SUBSIZED;
+        return ORDERED | SIZED | SUBSIZED;
     }
 }
