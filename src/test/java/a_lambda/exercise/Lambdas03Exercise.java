@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 public class Lambdas03Exercise {
 
+    @FunctionalInterface
     private interface GenericProduct<T> {
         T prod(T a, int i);
 
