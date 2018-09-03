@@ -18,17 +18,17 @@ public class ListZipSpliterator<L, R, T> implements Spliterator<T> {
         int sizeRList = rList.size();
 
         if (sizeLList > sizeRList) {
-            lList = lList.subList(0, sizeRList);
+            this.lList = lList.subList(0, sizeRList);
+            this.rList = rList;
         } else {
-            rList = rList.subList(0, sizeLList);
+            this.rList = rList.subList(0, sizeLList);
+            this.lList = lList;
         }
 
-        this.lList = lList;
-        this.rList = rList;
         this.combiner = combiner;
 
         this.startIn = 0;
-        this.endEx = lList.size();
+        this.endEx = this.lList.size();
     }
 
     @Override
